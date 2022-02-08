@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
-public class MicroserviciosApplication implements WebMvcConfigurer{
+public class UsuarioApplication implements WebMvcConfigurer{
 
 	public static void main(String[] args) {
-		SpringApplication.run(MicroserviciosApplication.class, args);
+		SpringApplication.run(UsuarioApplication.class, args);
 	}
 }
