@@ -2,7 +2,6 @@ package com.pragma.crecimiento.microservicios.util;
 
 
 import com.pragma.crecimiento.microservicios.imagen.exception.*;
-import com.pragma.crecimiento.microservicios.usuario.exception.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,24 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 class GlobalControllerExceptionHandler{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
-
-    @ExceptionHandler(UsuarioYaRegistradoException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleUsuarioYaRegistradoException(UsuarioYaRegistradoException exception) {
-        LOGGER.error(exception.getMessage());
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(exception.getMessage());
-    }
-
-    @ExceptionHandler(UsuarioNoEncontradoException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handleUsuarioNoEncontradoException(UsuarioNoEncontradoException exception) {
-        LOGGER.error(exception.getMessage());
-        return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(exception.getMessage());
-    }
 
     @ExceptionHandler(ImagenNoEncontradaException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
