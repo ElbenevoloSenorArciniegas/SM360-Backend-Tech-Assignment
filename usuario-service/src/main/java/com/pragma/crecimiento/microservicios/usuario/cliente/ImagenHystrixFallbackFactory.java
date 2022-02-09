@@ -6,7 +6,9 @@ import java.util.List;
 import com.pragma.crecimiento.microservicios.usuario.model.Imagen;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ImagenHystrixFallbackFactory implements ImagenClient{
 
     @Override
