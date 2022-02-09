@@ -2,11 +2,13 @@ package com.pragma.crecimiento.microservicios.usuario.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import com.pragma.crecimiento.microservicios.cliente.ImagenClient;
+import com.pragma.crecimiento.microservicios.usuario.cliente.ImagenClient;
 import com.pragma.crecimiento.microservicios.usuario.entity.Usuario;
+import com.pragma.crecimiento.microservicios.usuario.exception.ImagenNoRegistradaException;
 import com.pragma.crecimiento.microservicios.usuario.exception.UsuarioNoEncontradoException;
 import com.pragma.crecimiento.microservicios.usuario.exception.UsuarioYaRegistradoException;
 import com.pragma.crecimiento.microservicios.usuario.model.Imagen;
@@ -34,7 +36,10 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
         } catch (UsuarioNoEncontradoException e) {
             //El usuario no existe, guardarlo
             Imagen imagenRegistrada = imagenClient.registrar(usuario.getImagen()).getBody();
-            usuario.setImagen(imagenRegistrada);
+            if(imagenRegistrada == null){
+                throw new ImagenNoRegistradaException("La imagen asociada al usuario no pudo ser guardada");
+            }
+            usuario.setImagenId(imagenRegistrada.getId());
             return usuarioRepository.save(usuario);
         }
 
@@ -44,7 +49,7 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
     public Usuario obtenerPorId(Long id){
         Optional<Usuario> opcionalUsuarioReturn = usuarioRepository.findById(id);
         if(opcionalUsuarioReturn.isPresent()){
-            return opcionalUsuarioReturn.get();
+            return buscarImagen(opcionalUsuarioReturn.get());
         }
         throw new UsuarioNoEncontradoException("No existe un usuario con el id "+id);
     }
@@ -53,24 +58,30 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
     public Usuario obtenerPorTipoIdentificacionNumeroIdentificacion(String tipoIdentificacion, String numeroIdentificacion){
         Optional<Usuario> opcionalUsuarioReturn = usuarioRepository.findByTipoIdentificacionAndNumeroIdentificacion(tipoIdentificacion, numeroIdentificacion);
         if(opcionalUsuarioReturn.isPresent()){
-            return opcionalUsuarioReturn.get();
+            return buscarImagen(opcionalUsuarioReturn.get());
         }
         throw new UsuarioNoEncontradoException("No existe un usuario con el documento ["+tipoIdentificacion + "  " + numeroIdentificacion + "]");
     }
 
     @Override
     public List<Usuario> listarTodos() {
-        return usuarioRepository.findAll();
+        return usuarioRepository.findAll().stream().map(usuario -> { 
+                return buscarImagen(usuario); 
+            }).collect(Collectors.toList());
     }
 
     @Override
     public List<Usuario> listarEdadMayorIgual(int edad) {
-        return usuarioRepository.findByEdadGreaterThanEqual(edad);
+        return usuarioRepository.findByEdadGreaterThanEqual(edad).stream().map(usuario -> { 
+            return buscarImagen(usuario); 
+        }).collect(Collectors.toList());
     }
 
     @Override
     public Usuario actualizar(Usuario usuario){
+        System.out.println("ÑACACÑACÑACÑACÑACÑACÑAÑCÑAC");
         obtenerPorId(usuario.getId()); //Revisa si existe, si no, lanza excepción
+        System.out.println("ÑACACÑACÑACÑACÑACÑACÑAÑCÑACA X2");
         return usuarioRepository.save(usuario);
     }
 
@@ -82,6 +93,13 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
         return usuarioBD;
     }
 
+    private Usuario buscarImagen(Usuario usuario){
+        if(usuario.getImagenId() != null){
+            Imagen imagenReturn = imagenClient.obtenerPorId(usuario.getImagenId()).getBody();
+            usuario.setImagen(imagenReturn);
+        }
+        return usuario;
+    }
     
     
 }

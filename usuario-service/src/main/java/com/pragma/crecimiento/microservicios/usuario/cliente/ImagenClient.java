@@ -1,4 +1,4 @@
-package com.pragma.crecimiento.microservicios.cliente;
+package com.pragma.crecimiento.microservicios.usuario.cliente;
 
 import java.util.List;
 
@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-@FeignClient(name = "imagen-service")
-@RequestMapping(value="/imagenes")
+@FeignClient(name = "imagen-service", path = "/imagenes", fallback = ImagenHystrixFallbackFactory.class)
 public interface ImagenClient {
     
     @GetMapping("/")

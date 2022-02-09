@@ -25,12 +25,12 @@ public class ImagenServiceImpl implements ImagenServiceInterface{
     @Override
     @Transactional
     public Imagen registrar(Imagen imagen) {
-        System.out.println("AUXILIO, ESTÁN GUARDÁNDOME");
         return imagenRepository.save(imagen);
     }
 
     @Override
     public Imagen obtenerPorId(Long id){
+        System.out.println("AUXILIO, ESTÁ CONSULTÁNDOME MI ID "+id);
         Optional<Imagen> opcionalImagenReturn = imagenRepository.findById(id);
         if(opcionalImagenReturn.isPresent()){
             return opcionalImagenReturn.get();
