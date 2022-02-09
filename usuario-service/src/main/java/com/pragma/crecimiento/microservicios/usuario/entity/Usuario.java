@@ -6,8 +6,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
+
+import com.pragma.crecimiento.microservicios.usuario.model.Imagen;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,5 +36,7 @@ public class Usuario implements Serializable{
     @Positive(message = "La edad debe ser un número mayor que cero")
     private int edad;
     private String ciudadNacimiento;
-    private String foto;
+    
+    @Transient
+    private Imagen imagen;
 }

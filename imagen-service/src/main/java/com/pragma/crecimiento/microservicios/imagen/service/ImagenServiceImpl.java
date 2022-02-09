@@ -25,6 +25,7 @@ public class ImagenServiceImpl implements ImagenServiceInterface{
     @Override
     @Transactional
     public Imagen registrar(Imagen imagen) {
+        System.out.println("AUXILIO, ESTÁN GUARDÁNDOME");
         return imagenRepository.save(imagen);
     }
 

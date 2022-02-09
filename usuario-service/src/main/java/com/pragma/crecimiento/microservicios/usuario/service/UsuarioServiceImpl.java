@@ -5,9 +5,11 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import com.pragma.crecimiento.microservicios.cliente.ImagenClient;
 import com.pragma.crecimiento.microservicios.usuario.entity.Usuario;
 import com.pragma.crecimiento.microservicios.usuario.exception.UsuarioNoEncontradoException;
 import com.pragma.crecimiento.microservicios.usuario.exception.UsuarioYaRegistradoException;
+import com.pragma.crecimiento.microservicios.usuario.model.Imagen;
 import com.pragma.crecimiento.microservicios.usuario.repository.UsuarioRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +21,8 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
-    }
+    @Autowired
+    private ImagenClient imagenClient;
 
     @Override
     @Transactional
@@ -32,6 +33,8 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
             throw new UsuarioYaRegistradoException("Ya existe un usuario registrado con el documento ["+usuario.getTipoIdentificacion() + "  " + usuario.getNumeroIdentificacion() + "]");
         } catch (UsuarioNoEncontradoException e) {
             //El usuario no existe, guardarlo
+            Imagen imagenRegistrada = imagenClient.registrar(usuario.getImagen()).getBody();
+            usuario.setImagen(imagenRegistrada);
             return usuarioRepository.save(usuario);
         }
 
