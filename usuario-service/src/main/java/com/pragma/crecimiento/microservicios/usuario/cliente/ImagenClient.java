@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
-@FeignClient(name = "imagen-service", fallback = ImagenHystrixFallbackFactory.class)
+@FeignClient(name = "imagen-service", path = "/imagenes", fallback = ImagenHystrixFallbackFactory.class)
 public interface ImagenClient {
     
     @GetMapping("/")
