@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.pragma.crecimiento.microservicios</groupId>
-	<artifactId>configServer</artifactId>
+	<artifactId>config-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>configServer</name>
+	<name>config-service</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>

@@ -1,7 +1,5 @@
 package com.pragma.crecimiento.microservicios.util;
 
-
-import com.pragma.crecimiento.microservicios.imagen.exception.*;
 import com.pragma.crecimiento.microservicios.usuario.exception.*;
 
 import org.slf4j.Logger;
@@ -31,15 +29,6 @@ class GlobalControllerExceptionHandler{
     @ExceptionHandler(UsuarioNoEncontradoException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleUsuarioNoEncontradoException(UsuarioNoEncontradoException exception) {
-        LOGGER.error(exception.getMessage());
-        return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(exception.getMessage());
-    }
-
-    @ExceptionHandler(ImagenNoEncontradaException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handleImagenNoEncontradaException(ImagenNoEncontradaException exception) {
         LOGGER.error(exception.getMessage());
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
