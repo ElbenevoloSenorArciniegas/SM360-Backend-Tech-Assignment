@@ -2,18 +2,17 @@ package com.pragma.crecimiento.microservicios.imagen.entity;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Document("imagenes")
 @Data 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,7 +20,6 @@ import lombok.NoArgsConstructor;
 public class Imagen implements Serializable{
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
     @NotBlank

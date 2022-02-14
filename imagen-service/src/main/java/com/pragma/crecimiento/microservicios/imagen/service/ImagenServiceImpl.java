@@ -3,8 +3,6 @@ package com.pragma.crecimiento.microservicios.imagen.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import com.pragma.crecimiento.microservicios.imagen.entity.Imagen;
 import com.pragma.crecimiento.microservicios.imagen.exception.ImagenNoEncontradaException;
 import com.pragma.crecimiento.microservicios.imagen.repository.ImagenRepository;
@@ -19,7 +17,6 @@ public class ImagenServiceImpl implements ImagenServiceInterface{
     private ImagenRepository imagenRepository;
 
     @Override
-    @Transactional
     public Imagen registrar(Imagen imagen) {
         return imagenRepository.save(imagen);
     }
@@ -46,7 +43,6 @@ public class ImagenServiceImpl implements ImagenServiceInterface{
     }
 
     @Override
-    @Transactional
     public Imagen eliminar(Long id){
         Imagen imagenBD = obtenerPorId(id); //Revisa si existe, si no, lanza excepción
         imagenRepository.delete(imagenBD);
