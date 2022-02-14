@@ -18,10 +18,6 @@ public class ImagenServiceImpl implements ImagenServiceInterface{
     @Autowired
     private ImagenRepository imagenRepository;
 
-    public ImagenServiceImpl(ImagenRepository imagenRepository) {
-        this.imagenRepository = imagenRepository;
-    }
-
     @Override
     @Transactional
     public Imagen registrar(Imagen imagen) {

@@ -79,9 +79,7 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
 
     @Override
     public Usuario actualizar(Usuario usuario){
-        System.out.println("ÑACACÑACÑACÑACÑACÑACÑAÑCÑAC");
         obtenerPorId(usuario.getId()); //Revisa si existe, si no, lanza excepción
-        System.out.println("ÑACACÑACÑACÑACÑACÑACÑAÑCÑACA X2");
         return usuarioRepository.save(usuario);
     }
 
