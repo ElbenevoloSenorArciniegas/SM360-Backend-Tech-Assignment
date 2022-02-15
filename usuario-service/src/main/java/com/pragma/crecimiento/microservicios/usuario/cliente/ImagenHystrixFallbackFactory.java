@@ -17,30 +17,30 @@ public class ImagenHystrixFallbackFactory implements ImagenClient{
     }
 
     @Override
-    public ResponseEntity<Imagen> obtenerPorId(Long idImagen) {
+    public ResponseEntity<Imagen> obtenerPorId(String idImagen) {
         return ResponseEntity.ok(
-            Imagen.builder().id(0L).data("none").build()
+            Imagen.builder().id("0").data("none").build()
         );
     }
 
     @Override
     public ResponseEntity<Imagen> registrar(Imagen imagenRequest) {
         return ResponseEntity.ok(
-            Imagen.builder().id(0L).data("none").build()
+            Imagen.builder().id("0").data("none").build()
         );
     }
 
     @Override
     public ResponseEntity<Imagen> actualizar(Imagen imagenRequest) {
         return ResponseEntity.ok(
-            Imagen.builder().id(0L).data("none").build()
+            Imagen.builder().id("0").data("none").build()
         );
     }
 
     @Override
-    public ResponseEntity<Imagen> eliminar(Long idImagen) {
+    public ResponseEntity<Imagen> eliminar(String idImagen) {
         return ResponseEntity.ok(
-            Imagen.builder().id(0L).data("none").build()
+            Imagen.builder().id("0").data("none").build()
         );
     }
     

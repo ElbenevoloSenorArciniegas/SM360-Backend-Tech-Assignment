@@ -19,7 +19,7 @@ public interface ImagenClient {
     public ResponseEntity<List<Imagen>> listarTodos();
 
     @GetMapping("/{idImagen}")
-    public ResponseEntity<Imagen> obtenerPorId(@PathVariable(name = "idImagen") Long idImagen);
+    public ResponseEntity<Imagen> obtenerPorId(@PathVariable(name = "idImagen") String idImagen);
 
     @PostMapping("/")
     public ResponseEntity<Imagen> registrar(Imagen imagenRequest);
@@ -28,5 +28,5 @@ public interface ImagenClient {
     public ResponseEntity<Imagen> actualizar(Imagen imagenRequest);
 
     @DeleteMapping("/{idImagen}")
-    public ResponseEntity<Imagen> eliminar(@PathVariable(name = "idImagen") Long idImagen);
+    public ResponseEntity<Imagen> eliminar(@PathVariable(name = "idImagen") String idImagen);
 }

@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class Imagen implements Serializable{
     
     @Id
-    private Long id;
+    private String id;
     
     @NotBlank
     private String data;

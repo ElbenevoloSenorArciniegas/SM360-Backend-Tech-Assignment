@@ -37,7 +37,7 @@ public class Usuario implements Serializable{
     private int edad;
     private String ciudadNacimiento;
     
-    private Long imagenId;
+    private String imagenId;
     @Transient
     private Imagen imagen;
 }

@@ -40,6 +40,7 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
                 throw new ImagenNoRegistradaException("La imagen asociada al usuario no pudo ser guardada");
             }
             usuario.setImagenId(imagenRegistrada.getId());
+            usuario.setImagen(imagenRegistrada);
             return usuarioRepository.save(usuario);
         }
 
