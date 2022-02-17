@@ -1,6 +1,5 @@
 package com.pragma.crecimiento.microservicios.infrastructure.util;
 
-
 import com.pragma.crecimiento.microservicios.domain.exception.*;
 
 import org.slf4j.Logger;
@@ -14,13 +13,31 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
-class GlobalControllerExceptionHandler{
+class UsuarioControllerExceptionHandler{
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioControllerExceptionHandler.class);
 
-    @ExceptionHandler(ImagenNoEncontradaException.class)
+    @ExceptionHandler(UsuarioYaRegistradoException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleUsuarioYaRegistradoException(UsuarioYaRegistradoException exception) {
+        LOGGER.error(exception.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(UsuarioNoEncontradoException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handleImagenNoEncontradaException(ImagenNoEncontradaException exception) {
+    public ResponseEntity<String> handleUsuarioNoEncontradoException(UsuarioNoEncontradoException exception) {
+        LOGGER.error(exception.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(ImagenNoRegistradaException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleImagenNoRegistradaException(ImagenNoRegistradaException exception) {
         LOGGER.error(exception.getMessage());
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
