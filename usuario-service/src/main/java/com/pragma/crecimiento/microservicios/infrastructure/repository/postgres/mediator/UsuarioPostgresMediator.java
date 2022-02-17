@@ -2,6 +2,7 @@ package com.pragma.crecimiento.microservicios.infrastructure.repository.postgres
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.pragma.crecimiento.microservicios.aplication.UsuarioRepositoryInterface;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UsuarioPostgresMediator implements UsuarioRepositoryInterface{
+
+    Logger LOG = Logger.getLogger("UsuarioPostgresMediator");
 
     @Autowired
     private UsuarioPostgresRepository usuarioRepository;
@@ -52,7 +55,9 @@ public class UsuarioPostgresMediator implements UsuarioRepositoryInterface{
 
     @Override
     public List<Usuario> findAll() {
-        return usuarioRepository.findAll().stream().map(usuarioEntity -> { 
+        LOG.info("USUARIOS LISTADOS: "+usuarioRepository.findAll().size());
+        return usuarioRepository.findAll().stream().map(usuarioEntity -> {
+            LOG.info("ID: "+usuarioEntity.getId());
             return usuarioMapper.toDomain(usuarioEntity); 
         }).collect(Collectors.toList());
     }

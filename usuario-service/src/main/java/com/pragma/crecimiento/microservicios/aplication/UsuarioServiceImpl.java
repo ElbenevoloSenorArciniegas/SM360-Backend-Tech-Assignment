@@ -2,6 +2,7 @@ package com.pragma.crecimiento.microservicios.aplication;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.logging.Logger;
 
 import javax.transaction.Transactional;
 
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioServiceInterface{
+
+    Logger LOG = Logger.getLogger("UsuarioServiceImpl");
 
     @Autowired
     private UsuarioRepositoryInterface usuarioRepository;
@@ -55,7 +58,9 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
 
     @Override
     public List<Usuario> listarTodos() {
-        return usuarioRepository.findAll().stream().map(usuario -> { 
+        LOG.info("USUARIOS LISTADOS:");
+        return usuarioRepository.findAll().stream().map(usuario -> {
+                LOG.info("ID: "+usuario.getId());
                 return buscarImagen(usuario); 
             }).collect(Collectors.toList());
     }
