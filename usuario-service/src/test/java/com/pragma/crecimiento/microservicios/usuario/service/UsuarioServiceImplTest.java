@@ -8,10 +8,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.pragma.crecimiento.microservicios.usuario.entity.Usuario;
-import com.pragma.crecimiento.microservicios.usuario.exception.UsuarioNoEncontradoException;
-import com.pragma.crecimiento.microservicios.usuario.exception.UsuarioYaRegistradoException;
-import com.pragma.crecimiento.microservicios.usuario.repository.UsuarioRepository;
+import com.pragma.crecimiento.microservicios.aplication.UsuarioRepositoryInterface;
+import com.pragma.crecimiento.microservicios.aplication.UsuarioServiceImpl;
+import com.pragma.crecimiento.microservicios.domain.Usuario;
+import com.pragma.crecimiento.microservicios.domain.exception.UsuarioNoEncontradoException;
+import com.pragma.crecimiento.microservicios.domain.exception.UsuarioYaRegistradoException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class UsuarioServiceImplTest {
 
     @Mock
-    private UsuarioRepository usuarioRepository;
+    private UsuarioRepositoryInterface usuarioRepository;
 
     @InjectMocks
     private UsuarioServiceImpl usuarioService;
@@ -51,7 +52,7 @@ public class UsuarioServiceImplTest {
         //Decimos que no existe actualmente un usuario registrado con ese tipo y número de identificación
         Mockito.when(usuarioRepository.findByTipoIdentificacionAndNumeroIdentificacion(
             usuarioARegistrar.getTipoIdentificacion(), usuarioARegistrar.getNumeroIdentificacion()
-        )).thenReturn(Optional.ofNullable(null));
+        )).thenReturn(null);
 
         //Mockeamos el método save
         Mockito.when(usuarioRepository.save(usuarioARegistrar)).thenReturn(usuarioARegistrar);
@@ -76,7 +77,7 @@ public class UsuarioServiceImplTest {
 
         Mockito.when(usuarioRepository.findByTipoIdentificacionAndNumeroIdentificacion(
             usuarioRegistrado.getTipoIdentificacion(), usuarioRegistrado.getNumeroIdentificacion()
-        )).thenReturn(Optional.of(usuarioRegistrado));
+        )).thenReturn(usuarioRegistrado);
 
         //Ahora establecemos el usuario que llega por la petición. Comparten el mismo tipo y número de identificación
         
@@ -188,7 +189,7 @@ public class UsuarioServiceImplTest {
             .build();
         
         //Y el mock que lo consulta
-        Mockito.when(usuarioRepository.findById(usuarioRegistrado.getId())).thenReturn(Optional.of(usuarioRegistrado));
+        Mockito.when(usuarioRepository.findById(usuarioRegistrado.getId())).thenReturn((usuarioRegistrado));
         
         //Establecemos el usuario modificado de la petición
         Usuario usuarioModificado = Usuario.builder()
@@ -224,7 +225,7 @@ public class UsuarioServiceImplTest {
             .build();
         
         //Establecemos que al buscar el usuario obtiene un null
-        Mockito.when(usuarioRepository.findById(usuarioModificado.getId())).thenReturn(Optional.ofNullable(null));
+        Mockito.when(usuarioRepository.findById(usuarioModificado.getId())).thenReturn(null);
         
         //Y el mock que actualiza
         Mockito.when(usuarioRepository.save(usuarioModificado)).thenReturn(usuarioModificado);
@@ -258,7 +259,7 @@ public class UsuarioServiceImplTest {
             .build();
 
         //Establecemos el mock que busca el usuario por id y lo encuentra
-        Mockito.when(usuarioRepository.findById(usuarioRegistrado.getId())).thenReturn(Optional.of(usuarioRegistrado));
+        Mockito.when(usuarioRepository.findById(usuarioRegistrado.getId())).thenReturn(usuarioRegistrado);
 
         //El mock de delete por defecto no hace nada, lo dejams así
 
@@ -271,7 +272,7 @@ public class UsuarioServiceImplTest {
         Long idUsuario = 1L;
 
         //Establecemos que al buscar el usuario obtiene un null
-        Mockito.when(usuarioRepository.findById(idUsuario)).thenReturn(Optional.ofNullable(null));
+        Mockito.when(usuarioRepository.findById(idUsuario)).thenReturn(null);
 
         //El mock de delete por defecto no hace nada, lo dejams así
 
