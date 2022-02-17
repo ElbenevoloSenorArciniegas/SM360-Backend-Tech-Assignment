@@ -2,6 +2,7 @@ package com.pragma.crecimiento.microservicios.infrastructure.repository.mongo.me
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.pragma.crecimiento.microservicios.aplication.service.ImagenRepositoryInterface;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ImagenMongoMediator implements ImagenRepositoryInterface{
 
+    Logger LOG = Logger.getLogger("ImagenMongoMediator");
+
     @Autowired
     private ImagenMongoRepository imagenRepository;
 
@@ -25,7 +28,6 @@ public class ImagenMongoMediator implements ImagenRepositoryInterface{
 
     @Override
     public Imagen save(Imagen imagen) {
-        imagen.setId(null); //Evita que se guarden las imágenes con id 0. Obliga a autogenerar un id
         return imagenMapper.toDomain(imagenRepository.save(imagenMapper.toEntity(imagen)));
     }
 
@@ -33,6 +35,7 @@ public class ImagenMongoMediator implements ImagenRepositoryInterface{
     public Imagen findById(String id) {
         Optional<ImagenMongoEntity> opcionalImagenReturn = imagenRepository.findById(id);
         if(opcionalImagenReturn.isPresent()){
+            LOG.info("DEVUELTA UNA IMAGEN CON ID "+id);
             return imagenMapper.toDomain(opcionalImagenReturn.get());
         }
         throw new ImagenNoEncontradaException("No existe un imagen con el id "+id);

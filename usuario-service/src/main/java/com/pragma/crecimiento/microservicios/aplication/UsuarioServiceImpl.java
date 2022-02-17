@@ -58,9 +58,7 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
 
     @Override
     public List<Usuario> listarTodos() {
-        LOG.info("USUARIOS LISTADOS:");
         return usuarioRepository.findAll().stream().map(usuario -> {
-                LOG.info("ID: "+usuario.getId());
                 return buscarImagen(usuario); 
             }).collect(Collectors.toList());
     }

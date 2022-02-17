@@ -20,6 +20,7 @@ public class ImagenServiceImpl implements ImagenServiceInterface{
     @Override
     @Transactional
     public Imagen registrar(Imagen imagen) {
+        imagen.setId(null); //Evita que se guarden las imágenes con id 0. Obliga a autogenerar un id
         return imagenRepository.save(imagen);
     }
 

@@ -34,7 +34,7 @@ public class Usuario implements Serializable{
     }
 
     public boolean hasEmptyImagen(){
-        return this.hasImagen() && this.imagen.getData().isEmpty();
+        return this.hasImagen() && this.imagen.getData() == null;
     }
 
     public void setImagenId(String idImagen){

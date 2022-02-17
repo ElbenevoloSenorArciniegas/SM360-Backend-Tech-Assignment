@@ -57,7 +57,6 @@ public class UsuarioPostgresMediator implements UsuarioRepositoryInterface{
     public List<Usuario> findAll() {
         LOG.info("USUARIOS LISTADOS: "+usuarioRepository.findAll().size());
         return usuarioRepository.findAll().stream().map(usuarioEntity -> {
-            LOG.info("ID: "+usuarioEntity.getId());
             return usuarioMapper.toDomain(usuarioEntity); 
         }).collect(Collectors.toList());
     }
