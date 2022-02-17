@@ -1,4 +1,4 @@
-package com.pragma.crecimiento.microservicios.infrastructura.repository.mongo.entity;
+package com.pragma.crecimiento.microservicios.infrastructure.repository.mongo.entity;
 
 import java.io.Serializable;
 

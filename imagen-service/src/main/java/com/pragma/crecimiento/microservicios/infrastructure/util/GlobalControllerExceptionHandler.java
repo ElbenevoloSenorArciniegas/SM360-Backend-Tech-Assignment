@@ -1,4 +1,4 @@
-package com.pragma.crecimiento.microservicios.infrastructura.util;
+package com.pragma.crecimiento.microservicios.infrastructure.util;
 
 
 import com.pragma.crecimiento.microservicios.domain.exception.*;

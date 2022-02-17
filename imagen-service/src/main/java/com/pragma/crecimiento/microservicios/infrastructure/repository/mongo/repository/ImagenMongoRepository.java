@@ -1,8 +1,8 @@
-package com.pragma.crecimiento.microservicios.infrastructura.repository.mongo.repository;
+package com.pragma.crecimiento.microservicios.infrastructure.repository.mongo.repository;
 
 import java.util.Optional;
 
-import com.pragma.crecimiento.microservicios.infrastructura.repository.mongo.entity.ImagenMongoEntity;
+import com.pragma.crecimiento.microservicios.infrastructure.repository.mongo.entity.ImagenMongoEntity;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;

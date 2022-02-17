@@ -1,4 +1,4 @@
-package com.pragma.crecimiento.microservicios.infrastructura.controller;
+package com.pragma.crecimiento.microservicios.infrastructure.controller;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import javax.validation.Valid;
 
 import com.pragma.crecimiento.microservicios.aplication.service.ImagenServiceInterface;
 import com.pragma.crecimiento.microservicios.domain.Imagen;
-import com.pragma.crecimiento.microservicios.infrastructura.util.ErrorMessagesFormatter;
+import com.pragma.crecimiento.microservicios.infrastructure.util.ErrorMessagesFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

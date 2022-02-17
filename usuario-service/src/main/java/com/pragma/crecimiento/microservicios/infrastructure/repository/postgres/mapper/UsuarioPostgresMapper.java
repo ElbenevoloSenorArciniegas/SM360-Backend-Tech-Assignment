@@ -3,15 +3,20 @@ package com.pragma.crecimiento.microservicios.infrastructure.repository.postgres
 import com.pragma.crecimiento.microservicios.domain.Usuario;
 import com.pragma.crecimiento.microservicios.infrastructure.repository.postgres.entity.UsuarioPostgresEntity;
 
-import org.mapstruct.Mapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-@Mapper(componentModel = "spring")
-public interface UsuarioPostgresMapper {
+public class UsuarioPostgresMapper{
 
-  Usuario toDomain(UsuarioPostgresEntity usuarioEntity);
+  private ModelMapper mapper = new ModelMapper();
 
-  UsuarioPostgresEntity toEntity(Usuario usuario);
+  public Usuario toDomain(UsuarioPostgresEntity usuarioEntity){
+    return mapper.map(usuarioEntity, Usuario.class);
+  }
+
+  public UsuarioPostgresEntity toEntity(Usuario usuario){
+    return mapper.map(usuario, UsuarioPostgresEntity.class);
+  }
 
 }

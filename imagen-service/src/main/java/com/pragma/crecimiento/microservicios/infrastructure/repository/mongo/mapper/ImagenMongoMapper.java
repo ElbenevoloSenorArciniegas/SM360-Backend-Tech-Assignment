@@ -1,7 +1,7 @@
-package com.pragma.crecimiento.microservicios.infrastructura.repository.mongo.mapper;
+package com.pragma.crecimiento.microservicios.infrastructure.repository.mongo.mapper;
 
 import com.pragma.crecimiento.microservicios.domain.Imagen;
-import com.pragma.crecimiento.microservicios.infrastructura.repository.mongo.entity.ImagenMongoEntity;
+import com.pragma.crecimiento.microservicios.infrastructure.repository.mongo.entity.ImagenMongoEntity;
 
 import org.springframework.stereotype.Component;
 import org.modelmapper.ModelMapper;

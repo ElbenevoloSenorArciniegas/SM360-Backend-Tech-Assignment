@@ -1,4 +1,4 @@
-package com.pragma.crecimiento.microservicios.infrastructura.repository.mongo.mediator;
+package com.pragma.crecimiento.microservicios.infrastructure.repository.mongo.mediator;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import com.pragma.crecimiento.microservicios.aplication.service.ImagenRepositoryInterface;
 import com.pragma.crecimiento.microservicios.domain.Imagen;
 import com.pragma.crecimiento.microservicios.domain.exception.ImagenNoEncontradaException;
-import com.pragma.crecimiento.microservicios.infrastructura.repository.mongo.entity.ImagenMongoEntity;
-import com.pragma.crecimiento.microservicios.infrastructura.repository.mongo.mapper.ImagenMongoMapper;
-import com.pragma.crecimiento.microservicios.infrastructura.repository.mongo.repository.ImagenMongoRepository;
+import com.pragma.crecimiento.microservicios.infrastructure.repository.mongo.entity.ImagenMongoEntity;
+import com.pragma.crecimiento.microservicios.infrastructure.repository.mongo.mapper.ImagenMongoMapper;
+import com.pragma.crecimiento.microservicios.infrastructure.repository.mongo.repository.ImagenMongoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

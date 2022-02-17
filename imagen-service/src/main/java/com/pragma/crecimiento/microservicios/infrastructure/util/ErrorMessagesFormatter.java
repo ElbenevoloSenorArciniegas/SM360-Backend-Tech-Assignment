@@ -1,4 +1,4 @@
-package com.pragma.crecimiento.microservicios.infrastructura.util;
+package com.pragma.crecimiento.microservicios.infrastructure.util;
 
 import java.util.HashMap;
 import java.util.List;
