@@ -32,7 +32,9 @@ public class UsuarioPostgresMediator implements UsuarioRepositoryInterface{
         if(usuario.hasImagen()){
             usuarioEntity.setImagenId(usuario.getImagen().getId());
         }
-        return usuarioMapper.toDomain(usuarioRepository.save(usuarioEntity));
+        Usuario usuarioReturn = usuarioMapper.toDomain(usuarioRepository.save(usuarioEntity));
+        usuarioReturn.setImagen(usuario.getImagen()); //Para retornar el objeto imagen completo y no sólo el id
+        return usuarioReturn;
     }
 
     @Override

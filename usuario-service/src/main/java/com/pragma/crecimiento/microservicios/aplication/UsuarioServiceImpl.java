@@ -29,7 +29,7 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
 
     @Override
     @Transactional
-    public com.pragma.crecimiento.microservicios.domain.Usuario registrar(Usuario usuario) {
+    public Usuario registrar(Usuario usuario) {
 
         try {
             obtenerPorTipoIdentificacionNumeroIdentificacion(usuario.getTipoIdentificacion(), usuario.getNumeroIdentificacion());
@@ -40,6 +40,7 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
             if(imagenRegistrada == null){
                 throw new ImagenNoRegistradaException("La imagen asociada al usuario no pudo ser guardada");
             }
+            LOG.info("imagen resgistrada: {"+imagenRegistrada.getId()+", "+imagenRegistrada.getData()+"}");
             usuario.setImagen(imagenRegistrada);
             return usuarioRepository.save(usuario);
         }
@@ -73,6 +74,9 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
     @Override
     public Usuario actualizar(Usuario usuario){
         obtenerPorId(usuario.getId()); //Revisa si existe, si no, lanza excepción
+        if(usuario.hasImagen()){
+            imagenClient.actualizar(usuario.getImagen());
+        }
         return usuarioRepository.save(usuario);
     }
 
@@ -81,6 +85,9 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
     public Usuario eliminar(Long id){
         Usuario usuarioRegistrado = obtenerPorId(id);
         usuarioRepository.delete(usuarioRegistrado);
+        if(usuarioRegistrado.hasImagen()){
+            imagenClient.eliminar(usuarioRegistrado.getImagen().getId());
+        }
         return usuarioRegistrado;
     }
 
