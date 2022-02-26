@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.pragma.crecimiento.microservicios.domain.Imagen;
+import com.pragma.crecimiento.microservicios.domain.exception.ImagenNoEncontradaException;
+import com.pragma.crecimiento.microservicios.domain.exception.ImagenYaRegistradaException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,13 @@ public class ImagenServiceImpl implements ImagenServiceInterface{
     @Override
     @Transactional
     public Imagen registrar(Imagen imagen) {
-        imagen.setId(null); //Evita que se guarden las imágenes con id 0. Obliga a autogenerar un id
-        return imagenRepository.save(imagen);
+        try {
+            obtenerPorId(imagen.getId());
+            throw new ImagenYaRegistradaException("Ya existe una imagen registrada con el id "+imagen.getId());
+        } catch (ImagenNoEncontradaException e) {
+            imagen.setId(null); //Evita que se guarden las imágenes con id 0. Obliga a autogenerar un id
+            return imagenRepository.save(imagen);
+        }
     }
 
     @Override

@@ -35,7 +35,6 @@ public class ImagenMongoMediator implements ImagenRepositoryInterface{
     public Imagen findById(String id) {
         Optional<ImagenMongoEntity> opcionalImagenReturn = imagenRepository.findById(id);
         if(opcionalImagenReturn.isPresent()){
-            LOG.info("DEVUELTA UNA IMAGEN CON ID "+id);
             return imagenMapper.toDomain(opcionalImagenReturn.get());
         }
         throw new ImagenNoEncontradaException("No existe un imagen con el id "+id);
