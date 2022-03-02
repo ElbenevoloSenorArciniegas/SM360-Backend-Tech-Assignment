@@ -1,5 +1,26 @@
 version: '3'
 services:
+
+  postgres:
+    image: postgres
+    networks:
+      - mynet
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - APP_DB_USER=postgres
+      - APP_DB_PASS=postgres
+      - APP_DB_NAME=crecimiento
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/
+
   config-service:
     image: config-service
     networks:
@@ -9,6 +30,29 @@ services:
     image: registry-service
     networks:
       - mynet
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://registry-service:8099"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      - config-service
+
+  imagen-service:
+    image: imagen-service
+    networks:
+      - mynet
+    depends_on:
+      - registry-service
+
+  #usuario-service:
+  #  image: usuario-service
+  #  networks:
+  #    - mynet
+  #  depends_on:
+  #    - registry-service
+  #    - postgres
 
   gateway-service:
     image: gateway-service
@@ -16,34 +60,8 @@ services:
       - mynet
     ports:
       - 8080:8080
-
-  usuario-service:
-    image: usuario-service
-    networks:
-      - mynet
-    ports:
-      - 8091:8091
-
-  imagen-service:
-    image: imagen-service
-    networks:
-      - mynet
-    ports:
-      - 8092:8092
-
-  postgres:
-    image: postgres
-    networks:
-      - mynet
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - APP_DB_USER=postgres
-      - APP_DB_PASS=postgres
-      - APP_DB_NAME=crecimiento
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d/
+    depends_on:
+      - registry-service
 
 networks:
   mynet:
