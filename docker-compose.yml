@@ -30,14 +30,14 @@ services:
     image: registry-service
     networks:
       - mynet
-    restart: always
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://registry-service:8099"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
     depends_on:
       - config-service
+    command: sh -c "/wait && java -jar registry-service.jar"
+    environment:
+      - WAIT_HOSTS=config-service:8081
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=20
+      - WAIT_HOST_CONNECT_TIMEOUT=30
 
   imagen-service:
     image: imagen-service
@@ -46,13 +46,13 @@ services:
     depends_on:
       - registry-service
 
-  #usuario-service:
-  #  image: usuario-service
-  #  networks:
-  #    - mynet
-  #  depends_on:
-  #    - registry-service
-  #    - postgres
+  usuario-service:
+    image: usuario-service
+    networks:
+      - mynet
+    depends_on:
+      - registry-service
+      - postgres
 
   gateway-service:
     image: gateway-service

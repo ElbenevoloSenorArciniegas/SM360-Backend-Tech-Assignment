@@ -1,7 +1,9 @@
-FROM openjdk:11.0-jdk AS registry
-RUN mvn clean install
-
 FROM openjdk:11.0-jdk
-COPY "$registry/target/registry-service-0.0.1-SNAPSHOT.jar" "registry-service.jar"
+COPY "./target/registry-service-0.0.1-SNAPSHOT.jar" "registry-service.jar"
 EXPOSE 8099
-ENTRYPOINT [ "java","-jar","registry-service.jar" ]
+#ENTRYPOINT [ "java","-jar","registry-service.jar" ]
+
+# Add docker-compose-wait tool -------------------
+ENV WAIT_VERSION 2.7.2
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERSION/wait /wait
+RUN chmod +x /wait
