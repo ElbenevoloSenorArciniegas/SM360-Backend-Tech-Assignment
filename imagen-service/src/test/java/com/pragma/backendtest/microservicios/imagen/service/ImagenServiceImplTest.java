@@ -38,7 +38,7 @@ public class ImagenServiceImplTest {
         String dataImagen = "data";
 
         Imagen imagenARegistrar = Imagen.builder().data(dataImagen).build();
-        Imagen imagenRegistrada = Imagen.builder().id("idAutogenerado").data(dataImagen).build();
+        Imagen imagenRegistrada = Imagen.builder().id(0L).data(dataImagen).build();
 
         //Decimos que no existe actualmente una imagen con ese id
         Mockito.when(imagenRepository.findById(imagenARegistrar.getId()
@@ -55,7 +55,7 @@ public class ImagenServiceImplTest {
 
     @Test
     void whenRegistrar_withImagenRegistrada_thenTrhowImagenYaRegistradaException() {
-        String idImagen= "id";
+        Long idImagen= 0L;
         String dataImagen = "data";
 
         Imagen imagenARegistrar = Imagen.builder().id(idImagen).data(dataImagen).build();
@@ -76,7 +76,7 @@ public class ImagenServiceImplTest {
         assertTrue(actualMessage.contains(expectedMessage));
 
         //Nos aseguramos de que el mensaje tenga los campos que estamos pasando, para más semántica
-        assertTrue(actualMessage.contains(imagenARegistrar.getId()));
+        assertTrue(actualMessage.contains(imagenARegistrar.getId().toString()));
     }
 
 }

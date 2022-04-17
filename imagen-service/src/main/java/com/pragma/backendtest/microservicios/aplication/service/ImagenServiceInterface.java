@@ -8,11 +8,11 @@ public interface ImagenServiceInterface {
     
     Imagen registrar(Imagen imagen);
 
-    Imagen obtenerPorId(String id);
+    Imagen obtenerPorId(Long id);
 
     List<Imagen> listarTodos();
 
     Imagen actualizar(Imagen imagen);
 
-    Imagen eliminar(String id);
+    Imagen eliminar(Long id);
 }

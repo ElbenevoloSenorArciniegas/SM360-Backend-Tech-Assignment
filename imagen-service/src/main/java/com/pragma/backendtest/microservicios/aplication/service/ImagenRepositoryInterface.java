@@ -8,7 +8,7 @@ public interface ImagenRepositoryInterface {
 
     Imagen save(Imagen imagen);
 
-    Imagen findById(String id);
+    Imagen findById(Long id);
 
     List<Imagen> findAll();
 

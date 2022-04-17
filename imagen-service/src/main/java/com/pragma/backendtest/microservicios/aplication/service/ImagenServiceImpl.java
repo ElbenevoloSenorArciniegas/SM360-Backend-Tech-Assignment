@@ -32,7 +32,7 @@ public class ImagenServiceImpl implements ImagenServiceInterface{
     }
 
     @Override
-    public Imagen obtenerPorId(String id){
+    public Imagen obtenerPorId(Long id){
         return imagenRepository.findById(id);
     }
 
@@ -48,7 +48,7 @@ public class ImagenServiceImpl implements ImagenServiceInterface{
     }
 
     @Override
-    public Imagen eliminar(String id){
+    public Imagen eliminar(Long id){
         Imagen imagenRegistrada = obtenerPorId(id); //Revisa si existe, si no, lanza excepción
         imagenRepository.delete(imagenRegistrada);
         return imagenRegistrada;

@@ -35,7 +35,7 @@ public class ImagenController {
     }
 
     @GetMapping("/{idImagen}")
-    public ResponseEntity<Imagen> obtenerPorId(@PathVariable(name = "idImagen") String idImagen){
+    public ResponseEntity<Imagen> obtenerPorId(@PathVariable(name = "idImagen") Long idImagen){
         return ResponseEntity.status(HttpStatus.OK).body(imagenService.obtenerPorId(idImagen));
     }
 
@@ -56,7 +56,7 @@ public class ImagenController {
     }
 
     @DeleteMapping("/{idImagen}")
-    public ResponseEntity<Imagen> eliminar(@PathVariable(name = "idImagen") String idImagen){
+    public ResponseEntity<Imagen> eliminar(@PathVariable(name = "idImagen") Long idImagen){
         return ResponseEntity.status(HttpStatus.OK).body(imagenService.eliminar(idImagen));
     }
 }

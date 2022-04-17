@@ -1,4 +1,4 @@
-package com.pragma.backendtest.microservicios.infrastructure.repository.mongo.mediator;
+package com.pragma.backendtest.microservicios.infrastructure.repository.postgres.mediator;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,23 +8,23 @@ import java.util.stream.Collectors;
 import com.pragma.backendtest.microservicios.aplication.service.ImagenRepositoryInterface;
 import com.pragma.backendtest.microservicios.domain.Imagen;
 import com.pragma.backendtest.microservicios.domain.exception.ImagenNoEncontradaException;
-import com.pragma.backendtest.microservicios.infrastructure.repository.mongo.entity.ImagenMongoEntity;
-import com.pragma.backendtest.microservicios.infrastructure.repository.mongo.mapper.ImagenMongoMapper;
-import com.pragma.backendtest.microservicios.infrastructure.repository.mongo.repository.ImagenMongoRepository;
+import com.pragma.backendtest.microservicios.infrastructure.repository.postgres.entity.ImagenPostgresEntity;
+import com.pragma.backendtest.microservicios.infrastructure.repository.postgres.mapper.ImagenPostgresMapper;
+import com.pragma.backendtest.microservicios.infrastructure.repository.postgres.repository.ImagenPostgresRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ImagenMongoMediator implements ImagenRepositoryInterface{
+public class ImagenPostgresMediator implements ImagenRepositoryInterface{
 
-    Logger LOG = Logger.getLogger("ImagenMongoMediator");
-
-    @Autowired
-    private ImagenMongoRepository imagenRepository;
+    Logger LOG = Logger.getLogger("ImagenPostgresMediator");
 
     @Autowired
-    private ImagenMongoMapper imagenMapper;
+    private ImagenPostgresRepository imagenRepository;
+
+    @Autowired
+    private ImagenPostgresMapper imagenMapper;
 
     @Override
     public Imagen save(Imagen imagen) {
@@ -32,8 +32,8 @@ public class ImagenMongoMediator implements ImagenRepositoryInterface{
     }
 
     @Override
-    public Imagen findById(String id) {
-        Optional<ImagenMongoEntity> opcionalImagenReturn = imagenRepository.findById(id);
+    public Imagen findById(Long id) {
+        Optional<ImagenPostgresEntity> opcionalImagenReturn = imagenRepository.findById(id);
         if(opcionalImagenReturn.isPresent()){
             return imagenMapper.toDomain(opcionalImagenReturn.get());
         }
