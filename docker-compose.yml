@@ -28,7 +28,7 @@ services:
       - mynet
 
   registry-service:
-    image: registry-service
+    image: fredyyamidarciniegasramirez/360-registry-service
     networks:
       - mynet
     depends_on:
@@ -39,9 +39,18 @@ services:
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=20
       - WAIT_HOST_CONNECT_TIMEOUT=30
+  
+  gateway-service:
+    image: fredyyamidarciniegasramirez/360-gateway-service
+    networks:
+      - mynet
+    ports:
+      - 8080:8080
+    depends_on:
+      - registry-service
 
   dealer-service:
-    image: dealer-service
+    image: fredyyamidarciniegasramirez/360-dealer-service
     networks:
       - mynet
     ports:
@@ -71,15 +80,6 @@ services:
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=20
       - WAIT_HOST_CONNECT_TIMEOUT=30
-
-  gateway-service:
-    image: gateway-service
-    networks:
-      - mynet
-    ports:
-      - 8080:8080
-    depends_on:
-      - registry-service
 
 networks:
   mynet:
