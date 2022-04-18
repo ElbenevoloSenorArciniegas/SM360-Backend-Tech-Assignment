@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,8 +48,9 @@ public class UsuarioServiceImplTest {
     @Test
     void whenRegistrar_withUsuarioNuevo_thenRegistrar() {
         Long idUsuario = 1L;
+        UUID idDealer = UUID.randomUUID();
 
-        Dealer dealerARegistrar = Dealer.builder().id("id").data("data").build();
+        Dealer dealerARegistrar = Dealer.builder().id(idDealer).name("name").build();
 
         //Establecemos el usuario que llega por la petición
         Usuario usuarioARegistrar = Usuario.builder()
@@ -194,7 +196,7 @@ public class UsuarioServiceImplTest {
 
     @Test
     void whenListarTodos_thenReturnUsuarios(){
-        Dealer dealerPepe = Dealer.builder().id("pepe").build();
+        Dealer dealerPepe = Dealer.builder().id(UUID.randomUUID()).build();
         Usuario usuarioPepe = Usuario.builder()
             .id(3L)
             .nombre("Pepe")
@@ -257,7 +259,7 @@ public class UsuarioServiceImplTest {
         //Y el mock que lo consulta
         Mockito.when(usuarioRepository.findById(usuarioRegistrado.getId())).thenReturn((usuarioRegistrado));
         
-        Dealer dealerARegistrar = Dealer.builder().id("id").data("data").build();
+        Dealer dealerARegistrar = Dealer.builder().id(UUID.randomUUID()).name("name").build();
         //Establecemos el usuario modificado de la petición
         Usuario usuarioModificado = Usuario.builder()
             .id(idUsuario)
@@ -380,7 +382,7 @@ public class UsuarioServiceImplTest {
     void whenEliminar_withIdUsuarioValido_withDealer_thenUsuarioEliminado() {
         Long idUsuario = 1L;
 
-        Dealer dealerRegistrada = Dealer.builder().id("id").data("data").build();
+        Dealer dealerRegistrada = Dealer.builder().id(UUID.randomUUID()).name("name").build();
         //Establecemos el usuario registrado en bd
         Usuario usuarioRegistrado = Usuario.builder()
             .id(idUsuario)

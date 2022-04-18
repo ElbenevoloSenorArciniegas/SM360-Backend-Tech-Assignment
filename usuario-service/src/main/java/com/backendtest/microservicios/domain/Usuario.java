@@ -1,6 +1,7 @@
 package com.backendtest.microservicios.domain;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
@@ -34,10 +35,10 @@ public class Usuario implements Serializable{
     }
 
     public boolean hasEmptyDealer(){
-        return this.hasDealer() && this.dealer.getData() == null;
+        return this.hasDealer() && this.dealer.getName() == null;
     }
 
-    public void setDealerId(String idDealer){
+    public void setDealerId(UUID idDealer){
         if(!hasDealer()){
             this.dealer = new Dealer();
         }

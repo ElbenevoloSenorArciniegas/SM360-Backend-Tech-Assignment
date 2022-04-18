@@ -1,6 +1,7 @@
 package com.backendtest.microservicios.infrastructure.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -35,7 +36,7 @@ public class DealerController {
     }
 
     @GetMapping("/{idDealer}")
-    public ResponseEntity<Dealer> obtenerPorId(@PathVariable(name = "idDealer") Long idDealer){
+    public ResponseEntity<Dealer> obtenerPorId(@PathVariable(name = "idDealer") UUID idDealer){
         return ResponseEntity.status(HttpStatus.OK).body(dealerService.obtenerPorId(idDealer));
     }
 
@@ -56,7 +57,7 @@ public class DealerController {
     }
 
     @DeleteMapping("/{idDealer}")
-    public ResponseEntity<Dealer> eliminar(@PathVariable(name = "idDealer") Long idDealer){
+    public ResponseEntity<Dealer> eliminar(@PathVariable(name = "idDealer") UUID idDealer){
         return ResponseEntity.status(HttpStatus.OK).body(dealerService.eliminar(idDealer));
     }
 }

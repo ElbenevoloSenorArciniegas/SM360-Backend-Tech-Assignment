@@ -1,5 +1,7 @@
 package com.backendtest.microservicios.domain;
 
+import java.util.UUID;
+
 import javax.validation.constraints.NotBlank;
 
 import lombok.AllArgsConstructor;
@@ -13,8 +15,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Dealer{
     
-    private Long id;
+    private UUID id;
 
     @NotBlank
-    private String data;
+    private String name;
 }

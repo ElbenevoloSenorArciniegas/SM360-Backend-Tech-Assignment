@@ -1,6 +1,7 @@
 package com.backendtest.microservicios.infrastructure.cliente;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.backendtest.microservicios.domain.Dealer;
 
@@ -19,7 +20,7 @@ public interface DealerClient {
     public ResponseEntity<List<Dealer>> listarTodos();
 
     @GetMapping("/{idDealer}")
-    public ResponseEntity<Dealer> obtenerPorId(@PathVariable(name = "idDealer") String idDealer);
+    public ResponseEntity<Dealer> obtenerPorId(@PathVariable(name = "idDealer") UUID idDealer);
 
     @PostMapping("/")
     public ResponseEntity<Dealer> registrar(Dealer dealerRequest);
@@ -28,5 +29,5 @@ public interface DealerClient {
     public ResponseEntity<Dealer> actualizar(Dealer dealerRequest);
 
     @DeleteMapping("/{idDealer}")
-    public ResponseEntity<Dealer> eliminar(@PathVariable(name = "idDealer") String idDealer);
+    public ResponseEntity<Dealer> eliminar(@PathVariable(name = "idDealer") UUID idDealer);
 }

@@ -1,6 +1,7 @@
 package com.backendtest.microservicios.infrastructure.repository.postgres.entity;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,5 +32,5 @@ public class UsuarioPostgresEntity implements Serializable{
     private int edad;
     private String ciudadNacimiento;
     
-    private String dealerId;
+    private UUID dealerId;
 }

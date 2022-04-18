@@ -18,9 +18,9 @@ class DealerControllerExceptionHandler{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DealerControllerExceptionHandler.class);
 
-    @ExceptionHandler(DealerNoEncontradaException.class)
+    @ExceptionHandler(DealerNoEncontradoException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handleDealerNoEncontradaException(DealerNoEncontradaException exception) {
+    public ResponseEntity<String> handleDealerNoEncontradaException(DealerNoEncontradoException exception) {
         LOGGER.error(exception.getMessage());
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)

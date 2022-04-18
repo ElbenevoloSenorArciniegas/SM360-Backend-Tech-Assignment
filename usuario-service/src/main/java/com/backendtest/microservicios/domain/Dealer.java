@@ -1,5 +1,7 @@
 package com.backendtest.microservicios.domain;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Dealer{
     
-    private String id;
-    private String data;
+    private UUID id;
+    private String name;
 }

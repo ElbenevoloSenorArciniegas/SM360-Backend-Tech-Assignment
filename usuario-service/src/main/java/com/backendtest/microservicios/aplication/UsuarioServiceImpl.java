@@ -40,7 +40,7 @@ public class UsuarioServiceImpl implements UsuarioServiceInterface{
             if(dealerRegistrada == null){
                 throw new DealerNoRegistradaException("La dealer asociada al usuario no pudo ser guardada");
             }
-            LOG.info("dealer resgistrada: {"+dealerRegistrada.getId()+", "+dealerRegistrada.getData()+"}");
+            LOG.info("dealer resgistrada: {"+dealerRegistrada.getId()+", "+dealerRegistrada.getName()+"}");
             usuario.setDealer(dealerRegistrada);
             return usuarioRepository.save(usuario);
         }
