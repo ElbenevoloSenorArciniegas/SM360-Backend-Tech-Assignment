@@ -14,8 +14,8 @@ public class SwaggerConfiguration {
     @Bean
     public OpenAPI springShopOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("Dealer API")
-                .description("Car dealers microservice")
+                .info(new Info().title("Listing API")
+                .description("Listing microservice")
                 .version("v0.0.1")
                 .license(new License().name("Apache 2.0").url("http://springdoc.org")))
                 .externalDocs(new ExternalDocumentation()

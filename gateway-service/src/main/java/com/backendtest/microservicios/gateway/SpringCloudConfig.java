@@ -11,9 +11,9 @@ public class SpringCloudConfig {
     @Bean
     public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route(r -> r.path("/usuarios/**")
-                        .uri("http://usuario-service:8091/")
-                        //.id("usuario-service")
+                .route(r -> r.path("/listings/**")
+                        .uri("http://listing-service:8091/")
+                        //.id("listing-service")
                 )
                 .route(r -> r.path("/dealers/**")
                         .uri("http://dealer-service:8092/")
