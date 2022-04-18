@@ -43,6 +43,8 @@ services:
     image: dealer-service
     networks:
       - mynet
+    ports:
+      - 8092:8092
     depends_on:
       - registry-service
       - postgres
@@ -57,6 +59,8 @@ services:
     image: usuario-service
     networks:
       - mynet
+    ports:
+      - 8091:8091
     depends_on:
       - registry-service
       - postgres
