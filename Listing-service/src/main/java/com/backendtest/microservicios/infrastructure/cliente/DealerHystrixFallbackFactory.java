@@ -15,27 +15,27 @@ public class DealerHystrixFallbackFactory implements DealerClient{
     private Dealer defaultNoneDealer = Dealer.builder().id(UUID.randomUUID()).name("none").build();
 
     @Override
-    public ResponseEntity<List<Dealer>> listarTodos() {
+    public ResponseEntity<List<Dealer>> getAll() {
         return ResponseEntity.ok(new ArrayList<>());
     }
 
     @Override
-    public ResponseEntity<Dealer> obtenerPorId(UUID idDealer) {
+    public ResponseEntity<Dealer> getById(UUID idDealer) {
         return ResponseEntity.ok(defaultNoneDealer);
     }
 
     @Override
-    public ResponseEntity<Dealer> registrar(Dealer dealerRequest) {
+    public ResponseEntity<Dealer> create(Dealer dealerRequest) {
         return ResponseEntity.ok(defaultNoneDealer);
     }
 
     @Override
-    public ResponseEntity<Dealer> actualizar(Dealer dealerRequest) {
+    public ResponseEntity<Dealer> update(Dealer dealerRequest) {
         return ResponseEntity.ok(defaultNoneDealer);
     }
 
     @Override
-    public ResponseEntity<Dealer> eliminar(UUID idDealer) {
+    public ResponseEntity<Dealer> remove(UUID idDealer) {
         return ResponseEntity.ok(defaultNoneDealer);
     }
     

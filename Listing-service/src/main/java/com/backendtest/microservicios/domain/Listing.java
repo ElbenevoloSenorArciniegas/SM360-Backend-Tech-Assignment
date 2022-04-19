@@ -22,12 +22,20 @@ public class Listing implements Serializable{
     @NotBlank
     private String vehicle;
     @Positive
-    private Long price;
+    private Double price;
     @NotBlank
     private Date createdAt;
     private State state;
     
     private Dealer dealer;
+
+    public void setStateDefault(){
+        this.state = State.DRAFT;
+    }
+
+    public void setCreatedAtNow(){
+        this.createdAt = new Date();
+    }
 
     public boolean hasDealer(){
         return this.dealer != null;

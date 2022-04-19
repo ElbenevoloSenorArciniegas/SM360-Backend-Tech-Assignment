@@ -2,19 +2,19 @@ package com.backendtest.microservicios.listing.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.backendtest.microservicios.aplication.ListingRepositoryInterface;
 import com.backendtest.microservicios.aplication.ListingServiceImpl;
 import com.backendtest.microservicios.domain.Dealer;
 import com.backendtest.microservicios.domain.Listing;
-import com.backendtest.microservicios.domain.exception.DealerNotRegistredException;
+import com.backendtest.microservicios.domain.State;
+import com.backendtest.microservicios.domain.exception.DealerNotFoundException;
 import com.backendtest.microservicios.domain.exception.ListingNotFoundException;
-import com.backendtest.microservicios.domain.exception.ListingYetRegistredException;
 import com.backendtest.microservicios.infrastructure.cliente.DealerClient;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +29,14 @@ import org.springframework.http.ResponseEntity;
 @SpringBootTest
 public class ListingServiceImplTest {
 
+    UUID idDealer = UUID.randomUUID();
+    Dealer registredDealer;
+    
+    UUID idListing = UUID.randomUUID();
+    Listing listingARegistrar;
+
+    List<Listing> listOfDealerAndPublished;
+
     @Mock
     private ListingRepositoryInterface listingRepository;
 
@@ -41,390 +49,158 @@ public class ListingServiceImplTest {
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
+
+        this.registredDealer = Dealer.builder().id(this.idDealer).build();
+
+        this.listingARegistrar = Listing.builder()
+            .id(this.idListing)
+            .vehicle("Some chevrolet")
+            .price(50000D)
+            .dealer(this.registredDealer)
+            .build();
+
+        //Mock the save
+        Mockito.when(listingRepository.save(this.listingARegistrar)).thenReturn(this.listingARegistrar);
+
+        //Mock the listing searching
+        Mockito.when(listingRepository.findById(this.idListing)).thenReturn(this.listingARegistrar);
+
+        //Mock the dealer searching
+        Mockito.when(dealerClient.getById(this.idDealer)).thenReturn(ResponseEntity.ok(this.registredDealer));
+
+        this.listOfDealerAndPublished = new ArrayList<>();
+        this.listOfDealerAndPublished.add(
+            Listing.builder()
+                .vehicle("Some chevrolet")
+                .price(50000D)
+                .dealer(this.registredDealer)
+                .state(State.PUBLISHED)
+                .build()
+        );
+        this.listOfDealerAndPublished.add(
+            Listing.builder()
+                .vehicle("Some mazda")
+                .price(45000D)
+                .dealer(this.registredDealer)
+                .state(State.PUBLISHED)
+                .build()
+        );
+
+        //Mock the listing searching
+        Mockito.when(listingRepository.findByDealerAndState(this.idDealer, State.PUBLISHED)).thenReturn(this.listOfDealerAndPublished);
     }
 
     @Test
-    void whenRegistrar_withListingNuevo_thenRegistrar() {
-        Long idListing = 1L;
-        UUID idDealer = UUID.randomUUID();
+    void whenCreate_withNewListing_thenCreate() {
 
-        Dealer dealerARegistrar = Dealer.builder().id(idDealer).name("name").build();
+        Listing registredListing = listingService.create(this.listingARegistrar);
 
-        //Establecemos el listing que llega por la petición
-        Listing listingARegistrar = Listing.builder()
-            .id(idListing)
-            .nombre("Pancho")
-            .apellido("Villa")
-            .edad(45)
-            .ciudadNacimiento("Mexico")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521679")
-            .dealer(dealerARegistrar)
-            .build();
+        //Getting the same id
+        assertEquals(this.idListing, registredListing.getId());
+        //Getting the default draft state
+        assertEquals(State.DRAFT, registredListing.getState());
 
-        //Decimos que no existe actualmente un listing registrado con ese tipo y número de identificación
-        Mockito.when(listingRepository.findByTipoIdentificacionAndNumeroIdentificacion(
-            listingARegistrar.getTipoIdentificacion(), listingARegistrar.getNumeroIdentificacion()
-        )).thenThrow(new ListingNotFoundException("No existe un listing con el documento"));
-
-        //Mockeamos el guardado exitoso de la dealer en el otro micro
-        Mockito.when(dealerClient.registrar(dealerARegistrar)).thenReturn(ResponseEntity.ok(dealerARegistrar));
-
-        //Mockeamos el método save
-        Mockito.when(listingRepository.save(listingARegistrar)).thenReturn(listingARegistrar);
-
-        //Y probamos que retorne lo mismo sin lanzar excepciones
-        assertEquals(idListing, listingService.registrar(listingARegistrar).getId());
-
-        //verify(listingRepository.save(listingARegistrar), times(1));
+        LocalDate today = LocalDate.now();
+        LocalDate createdAtDay = LocalDate.ofInstant(registredListing.getCreatedAt().toInstant(), ZoneId.systemDefault());
+        //Created today
+        assertTrue(today.isEqual(createdAtDay));
     }
 
     @Test
-    void whenRegistrar_withListingExistente_thenTrhowListingYetRegistredException() {
-        Long idListing = 1L;
-        //Establecemos que existe un listing en BD
-        Listing listingRegistrado = Listing.builder()
-            .id(idListing)
-            .nombre("Juan")
-            .apellido("Bautista")
-            .edad(12)
-            .ciudadNacimiento("Judá")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521679")
-            .build();
+    void whenCreate_withNotDealer_thenTrhowsDealerNotFoundException() {
 
-        Mockito.when(listingRepository.findByTipoIdentificacionAndNumeroIdentificacion(
-            listingRegistrado.getTipoIdentificacion(), listingRegistrado.getNumeroIdentificacion()
-        )).thenReturn(listingRegistrado);
+        //Override the mock for the dealersearching
+        Mockito.when(dealerClient.getById(this.idDealer)).thenThrow(new DealerNotFoundException("Not found Dealer with id "+this.idDealer));
 
-        //Ahora establecemos el listing que llega por la petición. Comparten el mismo tipo y número de identificación
-        
-        Listing listingARegistrar = Listing.builder()
-            .nombre("Pancho")
-            .apellido("Villa")
-            .edad(45)
-            .ciudadNacimiento("Mexico")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521679")
-            .build();
-        
-        Mockito.when(listingRepository.save(listingARegistrar)).thenReturn(listingARegistrar);
-
-        //Y esperamos una excepción de ListingYetRegistredException
-        
-        Exception exception = assertThrows(ListingYetRegistredException.class, () -> {
-            listingService.registrar(listingARegistrar);
+        //Wait for a DealerNotFoundException
+        Exception exception = assertThrows(DealerNotFoundException.class, () -> {
+            listingService.create(this.listingARegistrar);
         });
     
-        String expectedMessage = "Ya existe un listing registrado con el documento";
+        String expectedMessage = "Not found Dealer with id ";
         String actualMessage = exception.getMessage();
     
         assertTrue(actualMessage.contains(expectedMessage));
 
-        //Nos aseguramos de que el mensaje tenga los campos que estamos pasando, para más semántica
-        assertTrue(actualMessage.contains(listingARegistrar.getTipoIdentificacion()));
-        assertTrue(actualMessage.contains(listingARegistrar.getNumeroIdentificacion()));
-        
+        //Got the id in the message for semantic
+        assertTrue(actualMessage.contains(this.idDealer.toString()));
     }
 
     @Test
-    void whenRegistrar_withDealerNoRegistrada_thenTrhowDealerNotRegistredException() {
-        Long idListing = 1L;
+    void whenUpdate_withFoundListing_thenUpdate() {
 
-        Dealer dealerARegistrar = null;
+        //Mock the dealer searching
+        Mockito.when(listingRepository.findById(this.idListing)).thenReturn(this.listingARegistrar);
 
-        //Establecemos el listing que llega por la petición
-        Listing listingARegistrar = Listing.builder()
-            .id(idListing)
-            .nombre("Pancho")
-            .apellido("Villa")
-            .edad(45)
-            .ciudadNacimiento("Mexico")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521679")
-            .dealer(dealerARegistrar)
-            .build();
+        Listing updatedListing = listingService.update(this.listingARegistrar);
 
-        //Decimos que no existe actualmente un listing registrado con ese tipo y número de identificación
-        Mockito.when(listingRepository.findByTipoIdentificacionAndNumeroIdentificacion(
-            listingARegistrar.getTipoIdentificacion(), listingARegistrar.getNumeroIdentificacion()
-        )).thenThrow(new ListingNotFoundException("No existe un listing con el documento"));
-
-        //Mockeamos el guardado exitoso de la dealer en el otro micro
-        Mockito.when(dealerClient.registrar(listingARegistrar.getDealer())).thenReturn(ResponseEntity.ok(dealerARegistrar));
-
-        //Mockeamos el método save
-        Mockito.when(listingRepository.save(listingARegistrar)).thenReturn(listingARegistrar);
-
-        //Y esperamos una excepción de DealerNotRegistredException
-        
-        Exception exception = assertThrows(DealerNotRegistredException.class, () -> {
-            listingService.registrar(listingARegistrar);
-        });
-    
-        String expectedMessage = "La dealer asociada al listing no pudo ser guardada";
-        String actualMessage = exception.getMessage();
-    
-        assertTrue(actualMessage.contains(expectedMessage));        
+        LocalDate today = LocalDate.now();
+        LocalDate createdAtDay = LocalDate.ofInstant(updatedListing.getCreatedAt().toInstant(), ZoneId.systemDefault());
+        //Created today
+        assertTrue(today.isEqual(createdAtDay));
     }
 
     @Test
-    void whenListarEdadMayorA_thenReturnListings() {
-        Listing listingPepe = Listing.builder()
-            .nombre("Pepe")
-            .edad(18)
-            .build();
-        
-        Listing listingJuan = Listing.builder()
-            .nombre("Juan")
-            .edad(55)
-            .build();
+    void whenUpdate_withNotFoundListing_thenTrhowsListingNotFoundException() {
 
-        final int EDAD_PRUEBA = 18;
+        //Override the mock for the listing searching
+        Mockito.when(listingRepository.findById(this.idListing)).thenReturn(null);
 
-        Mockito.when(listingRepository.findByEdadGreaterThanEqual(EDAD_PRUEBA)).thenReturn(Stream.of(listingPepe, listingJuan).collect(Collectors.toList()));
-
-        List<Listing> listings = listingService.listarEdadMayorIgual(EDAD_PRUEBA);
-        assertEquals(2, listings.size());
-
-        for (Listing listing : listings) {
-            assertTrue(listing.getEdad() >= EDAD_PRUEBA);
-        }
-    }
-
-    @Test
-    void whenListarTodos_thenReturnListings(){
-        Dealer dealerPepe = Dealer.builder().id(UUID.randomUUID()).build();
-        Listing listingPepe = Listing.builder()
-            .id(3L)
-            .nombre("Pepe")
-            .apellido("Pateatraseros")
-            .edad(18)
-            .ciudadNacimiento("Springfield")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521678")
-            .dealer(dealerPepe)
-            .build();
-        
-        Listing listingJuan = Listing.builder()
-            .id(3L)
-            .nombre("Juan")
-            .apellido("Bautista")
-            .edad(55)
-            .ciudadNacimiento("Mexico")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521644")
-            .build();
-
-        Listing listingMenor = Listing.builder()
-            .id(3L)
-            .nombre("Juanito")
-            .apellido("Bautista")
-            .edad(17)
-            .ciudadNacimiento("Mexico")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521644")
-            .build();
-
-        List<Listing> listings = new ArrayList<>();
-        listings.add(listingPepe);
-        listings.add(listingJuan);
-        listings.add(listingMenor);
-
-        Mockito.when(listingRepository.findAll()).thenReturn(Stream.of(listingPepe, listingJuan, listingMenor).collect(Collectors.toList()));
-
-        //Mockeamos el dealerClient para buscar la dealer
-        Mockito.when(dealerClient.obtenerPorId(listingPepe.getDealer().getId())).thenReturn(ResponseEntity.ok(dealerPepe));
-
-        assertEquals(3, listingService.listarTodos().size());
-    }
-
-    @Test
-    void whenActualizar_withListingExistente_withDealer_thenListingModificado() {
-        Long idListing = 1L;
-
-        //Establecemos el listing registrado en bd
-        Listing listingRegistrado = Listing.builder()
-            .id(idListing)
-            .nombre("Pancho")
-            .apellido("Villa")
-            .edad(45)
-            .ciudadNacimiento("Mexico")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521679")
-            .build();
-        
-        //Y el mock que lo consulta
-        Mockito.when(listingRepository.findById(listingRegistrado.getId())).thenReturn((listingRegistrado));
-        
-        Dealer dealerARegistrar = Dealer.builder().id(UUID.randomUUID()).name("name").build();
-        //Establecemos el listing modificado de la petición
-        Listing listingModificado = Listing.builder()
-            .id(idListing)
-            .nombre("Pancracio")
-            .apellido("Nutriales")
-            .edad(44)
-            .ciudadNacimiento("Oslo")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521679")
-            .dealer(dealerARegistrar)
-            .build();
-
-        //Y el mock que lo actualiza
-        Mockito.when(listingRepository.save(listingModificado)).thenReturn(listingModificado);
-
-        //Mockeamos el dealerClient para actualizar correctamente la dealer
-        Mockito.when(dealerClient.actualizar(listingModificado.getDealer())).thenReturn(ResponseEntity.ok(dealerARegistrar));
-
-        //Llamamos el método y esperamos que tengan el mismo id, no que se haya guardado uno nuevo con otro id...
-        //También que no salte excepción de ListingNotFoundException
-        listingModificado = listingService.actualizar(listingModificado);
-        assertEquals(listingRegistrado.getId(), listingModificado.getId());
-    }
-
-    @Test
-    void whenActualizar_withListingExistente_withoutDealer_thenListingModificado() {
-        Long idListing = 1L;
-        //Establecemos el listing registrado en bd
-        Listing listingRegistrado = Listing.builder()
-            .id(idListing)
-            .nombre("Pancho")
-            .apellido("Villa")
-            .edad(45)
-            .ciudadNacimiento("Mexico")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521679")
-            .build();
-        
-        //Y el mock que lo consulta
-        Mockito.when(listingRepository.findById(listingRegistrado.getId())).thenReturn((listingRegistrado));
-        
-        //Establecemos el listing modificado de la petición
-        Listing listingModificado = Listing.builder()
-            .id(idListing)
-            .nombre("Pancracio")
-            .apellido("Nutriales")
-            .edad(44)
-            .ciudadNacimiento("Oslo")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521679")
-            .build();
-        
-        //Y el mock que lo actualiza
-        Mockito.when(listingRepository.save(listingModificado)).thenReturn(listingModificado);
-
-        //Llamamos el método y esperamos que tengan el mismo id, no que se haya guardado uno nuevo con otro id...
-        //También que no salte excepción de ListingNotFoundException
-        listingModificado = listingService.actualizar(listingModificado);
-        assertEquals(listingRegistrado.getId(), listingModificado.getId());
-    }
-    
-    @Test
-    void whenActualizar_withListingNoExistente_thenThrowListingNotFoundException() {
-        Long idListing = 1L;
-        //Establecemos el listing modificado de la petición
-        Listing listingModificado = Listing.builder()
-            .id(idListing)
-            .nombre("Pancracio")
-            .apellido("Nutriales")
-            .edad(44)
-            .ciudadNacimiento("Oslo")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521679")
-            .build();
-        
-        //Establecemos que al buscar el listing lanza una excepción
-        Mockito.when(listingRepository.findById(listingModificado.getId())).thenThrow(new ListingNotFoundException("No existe un listing con el id "+idListing));
-        
-        //Y el mock que actualiza
-        Mockito.when(listingRepository.save(listingModificado)).thenReturn(listingModificado);
-
-        //Y esperamos una excepción de ListingNotFoundException
+        //Wait for a ListingNotFoundException
         Exception exception = assertThrows(ListingNotFoundException.class, () -> {
-            listingService.actualizar(listingModificado);
+            listingService.create(listingARegistrar);
         });
     
-        //Nos aseguramos de que el mensaje tenga los campos que estamos pasando, para más semántica
-        String expectedMessage = "No existe un listing con el id";
+        String expectedMessage = "Not found Listing with id ";
         String actualMessage = exception.getMessage();
     
         assertTrue(actualMessage.contains(expectedMessage));
-        assertTrue(actualMessage.contains(listingModificado.getId().toString()));
+
+        //Got the id in the message for semantic
+        assertTrue(actualMessage.contains(this.idListing.toString()));
     }
 
     @Test
-    void whenEliminar_withIdListingValido_thenListingEliminado() {
-        Long idListing = 1L;
+    void whenPublish_withFoundListing_thenPublish() {
 
-        //Establecemos el listing registrado en bd
-        Listing listingRegistrado = Listing.builder()
-            .id(idListing)
-            .nombre("Pancho")
-            .apellido("Villa")
-            .edad(45)
-            .ciudadNacimiento("Mexico")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521679")
-            .build();
+        Listing publishedListing = listingService.publish(this.idListing);
 
-        //Establecemos el mock que busca el listing por id y lo encuentra
-        Mockito.when(listingRepository.findById(listingRegistrado.getId())).thenReturn(listingRegistrado);
-
-        //El mock de delete por defecto no hace nada, lo dejams así
-
-        listingRegistrado = listingService.eliminar(idListing);
-        assertEquals(idListing, listingRegistrado.getId());
+        assertEquals(State.PUBLISHED, publishedListing.getState());
     }
 
     @Test
-    void whenEliminar_withIdListingValido_withDealer_thenListingEliminado() {
-        Long idListing = 1L;
+    void whenUnpublish_withFoundListing_thenUnpublish() {
 
-        Dealer dealerRegistrada = Dealer.builder().id(UUID.randomUUID()).name("name").build();
-        //Establecemos el listing registrado en bd
-        Listing listingRegistrado = Listing.builder()
-            .id(idListing)
-            .nombre("Pancho")
-            .apellido("Villa")
-            .edad(45)
-            .ciudadNacimiento("Mexico")
-            .tipoIdentificacion("CC")
-            .numeroIdentificacion("1090521679")
-            .dealer(dealerRegistrada)
-            .build();
+        Listing unpublishedListing = listingService.unpublish(this.idListing);
 
-        //Establecemos el mock que busca el listing por id y lo encuentra
-        Mockito.when(listingRepository.findById(listingRegistrado.getId())).thenReturn(listingRegistrado);
-
-        //Mockeamos el dealerClient para eliminar la dealer
-        Mockito.when(dealerClient.eliminar(listingRegistrado.getDealer().getId())).thenReturn(ResponseEntity.ok(dealerRegistrada));
-
-        //El mock de delete por defecto no hace nada, lo dejams así
-
-        listingRegistrado = listingService.eliminar(idListing);
-        assertEquals(idListing, listingRegistrado.getId());
+        assertEquals(State.DRAFT, unpublishedListing.getState());
     }
 
     @Test
-    void whenEliminar_withListingNoExistente_thenThrowListingNotFoundException() {
-        Long idListing = 1L;
+    void whenGetAllByDealerAndStatedListing_withFoundDealer_withFoundState_thenGet() {
 
-        //Establecemos que al buscar el listing lanza una excepción
-        Mockito.when(listingRepository.findById(idListing)).thenThrow(new ListingNotFoundException("No existe un listing con el id "+idListing));
+        List<Listing> list = listingService.getAllByDealerAndState(this.idDealer, State.PUBLISHED);
+        assertIterableEquals(this.listOfDealerAndPublished, list);
+    }
 
-        //El mock de delete por defecto no hace nada, lo dejams así
+    @Test
+    void whenGetAllByDealerAndStatedListing_withNotFoundDealer_withFoundState_thenEmpty() {
 
-        //Y esperamos una excepción de ListingNotFoundException
-        Exception exception = assertThrows(ListingNotFoundException.class, () -> {
-            listingService.eliminar(idListing);
-        });
-    
-        //Nos aseguramos de que el mensaje tenga los campos que estamos pasando, para más semántica
-        String expectedMessage = "No existe un listing con el id";
-        String actualMessage = exception.getMessage();
-    
-        assertTrue(actualMessage.contains(expectedMessage));
-        assertTrue(actualMessage.contains(idListing.toString()));
+        //Override the mock for the listing searching
+        Mockito.when(listingRepository.findByDealerAndState(Mockito.any(UUID.class), State.PUBLISHED)).thenReturn(new ArrayList<>());
+
+        List<Listing> list = listingService.getAllByDealerAndState(UUID.randomUUID(), State.PUBLISHED);
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
+    void whenGetAllByDealerAndStatedListing_withFoundDealer_withNotFoundState_thenEmpty() {
+
+        //Override the mock for the listing searching
+        Mockito.when(listingRepository.findByDealerAndState(this.idDealer, Mockito.any(State.class))).thenReturn(new ArrayList<>());
+
+        List<Listing> list = listingService.getAllByDealerAndState(this.idDealer, State.PUBLISHED);
+        assertTrue(list.isEmpty());
     }
 
 }

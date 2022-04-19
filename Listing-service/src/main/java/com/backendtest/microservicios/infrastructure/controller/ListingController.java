@@ -31,43 +31,43 @@ public class ListingController {
     private ListingServiceInterface listingService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Listing>> listarTodos(){
-        return ResponseEntity.status(HttpStatus.OK).body(listingService.listarTodos());
+    public ResponseEntity<List<Listing>> getAll(){
+        return ResponseEntity.status(HttpStatus.OK).body(listingService.getAll());
     }
 
     @GetMapping("/{idListing}")
-    public ResponseEntity<Listing> obtenerPorId(@PathVariable(name = "idListing") UUID idListing){
-        return ResponseEntity.status(HttpStatus.OK).body(listingService.obtenerPorId(idListing));
-    }
-
-    @GetMapping("/documento/{tipo}/{numero}/")
-    public ResponseEntity<Listing> obtenerPorTipoIdentificacionNumeroIdentificacion(@PathVariable(name = "tipo") String tipo, @PathVariable(name = "numero") String numero){
-        return ResponseEntity.status(HttpStatus.OK).body(listingService.obtenerPorTipoIdentificacionNumeroIdentificacion(tipo, numero));
-    }
-
-    @GetMapping("/edadMayorIgualA/{edadMinima}")
-    public ResponseEntity<List<Listing>> listarEdadMayorIgual(@PathVariable(name = "edadMinima") int edadMinima){
-        return ResponseEntity.status(HttpStatus.OK).body(listingService.listarEdadMayorIgual(edadMinima));
+    public ResponseEntity<Listing> getById(@PathVariable(name = "idListing") UUID idListing){
+        return ResponseEntity.status(HttpStatus.OK).body(listingService.getById(idListing));
     }
 
     @PostMapping("/")
-    public ResponseEntity<Listing> registrar(@Valid @RequestBody Listing listingRequest, BindingResult result){
+    public ResponseEntity<Listing> create(@Valid @RequestBody Listing listingRequest, BindingResult result){
         if(result.hasErrors()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessagesFormatter.formatearMensajesToString(result));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(listingService.registrar(listingRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(listingService.create(listingRequest));
     }
     
     @PutMapping("/")
-    public ResponseEntity<Listing> actualizar(@Valid @RequestBody Listing listingRequest, BindingResult result){
+    public ResponseEntity<Listing> update(@Valid @RequestBody Listing listingRequest, BindingResult result){
         if(result.hasErrors()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessagesFormatter.formatearMensajesToString(result));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(listingService.actualizar(listingRequest));
+        return ResponseEntity.status(HttpStatus.OK).body(listingService.update(listingRequest));
+    }
+
+    @PutMapping("/public/{idListing}")
+    public ResponseEntity<Listing> publish(@PathVariable(name = "idListing") UUID idListing){
+        return ResponseEntity.status(HttpStatus.OK).body(listingService.publish(idListing));
+    }
+
+    @PutMapping("/draft/{idListing}")
+    public ResponseEntity<Listing> unpublish(@PathVariable(name = "idListing") UUID idListing){
+        return ResponseEntity.status(HttpStatus.OK).body(listingService.unpublish(idListing));
     }
 
     @DeleteMapping("/{idListing}")
-    public ResponseEntity<Listing> eliminar(@PathVariable(name = "idListing") UUID idListing){
-        return ResponseEntity.status(HttpStatus.OK).body(listingService.eliminar(idListing));
+    public ResponseEntity<Listing> remove(@PathVariable(name = "idListing") UUID idListing){
+        return ResponseEntity.status(HttpStatus.OK).body(listingService.remove(idListing));
     }
 }

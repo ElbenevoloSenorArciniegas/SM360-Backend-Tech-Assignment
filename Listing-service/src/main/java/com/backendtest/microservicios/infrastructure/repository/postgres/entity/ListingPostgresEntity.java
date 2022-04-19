@@ -35,7 +35,7 @@ public class ListingPostgresEntity implements Serializable{
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     private String vehicle;
-    private Long price;
+    private Double price;
     private Date createdAt;
     @Enumerated(EnumType.STRING)
     private State state;

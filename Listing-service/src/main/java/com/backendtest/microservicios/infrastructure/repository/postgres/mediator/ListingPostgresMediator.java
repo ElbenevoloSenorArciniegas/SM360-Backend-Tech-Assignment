@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.backendtest.microservicios.aplication.ListingRepositoryInterface;
 import com.backendtest.microservicios.domain.Listing;
+import com.backendtest.microservicios.domain.State;
 import com.backendtest.microservicios.domain.exception.ListingNotFoundException;
 import com.backendtest.microservicios.infrastructure.repository.postgres.entity.ListingPostgresEntity;
 import com.backendtest.microservicios.infrastructure.repository.postgres.mapper.ListingPostgresMapper;
@@ -34,7 +35,7 @@ public class ListingPostgresMediator implements ListingRepositoryInterface{
             listingEntity.setDealerId(listing.getDealer().getId());
         }
         Listing listingReturn = listingMapper.toDomain(listingRepository.save(listingEntity));
-        listingReturn.setDealer(listing.getDealer()); //Para retornar el objeto dealer completo y no sólo el id
+        listingReturn.setDealer(listing.getDealer()); //Returns full dealer object, not only its id
         return listingReturn;
     }
 
@@ -48,15 +49,6 @@ public class ListingPostgresMediator implements ListingRepositoryInterface{
     }
 
     @Override
-    public Listing findByTipoIdentificacionAndNumeroIdentificacion(String tipoIdentificacion, String numeroIdentificacion) {
-        Optional<ListingPostgresEntity> opcionalListingReturn = listingRepository.findByTipoIdentificacionAndNumeroIdentificacion(tipoIdentificacion, numeroIdentificacion);
-        if(opcionalListingReturn.isPresent()){
-            return listingMapper.toDomain(opcionalListingReturn.get());
-        }
-        throw new ListingNotFoundException("No existe un listing con el documento ["+tipoIdentificacion + "  " + numeroIdentificacion + "]");
-    }
-
-    @Override
     public List<Listing> findAll() {
         LOG.info("Listings: "+listingRepository.findAll().size());
         return listingRepository.findAll().stream().map(listingEntity -> {
@@ -65,15 +57,14 @@ public class ListingPostgresMediator implements ListingRepositoryInterface{
     }
 
     @Override
-    public List<Listing> findByEdadGreaterThanEqual(int edad) {
-        return listingRepository.findByEdadGreaterThanEqual(edad).stream().map(listingEntity -> { 
-            return listingMapper.toDomain(listingEntity); 
-        }).collect(Collectors.toList());
+    public void delete(Listing listing) {
+        listingRepository.delete(listingMapper.toEntity(listing));
     }
 
     @Override
-    public void delete(Listing listing) {
-        listingRepository.delete(listingMapper.toEntity(listing));
+    public List<Listing> findByDealerAndState(UUID idDealer, State state) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
 }

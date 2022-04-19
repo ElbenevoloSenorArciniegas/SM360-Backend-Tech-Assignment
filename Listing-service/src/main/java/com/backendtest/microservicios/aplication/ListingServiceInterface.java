@@ -4,20 +4,23 @@ import java.util.List;
 import java.util.UUID;
 
 import com.backendtest.microservicios.domain.Listing;
+import com.backendtest.microservicios.domain.State;
 
 public interface ListingServiceInterface {
     
-    Listing registrar(Listing listing);
+    Listing create(Listing listing);
 
-    Listing obtenerPorId(UUID id);
+    Listing getById(UUID id);
 
-    Listing obtenerPorTipoIdentificacionNumeroIdentificacion(String tipoIdentificacion, String numeroIdentificacion);
+    List<Listing> getAll();
 
-    List<Listing> listarTodos();
+    List<Listing> getAllByDealerAndState(UUID dealerId, State state);
 
-    List<Listing> listarEdadMayorIgual(int edad);
+    Listing update(Listing listing);
 
-    Listing actualizar(Listing listing);
+    Listing remove(UUID id);
 
-    Listing eliminar(UUID id);
+    Listing publish(UUID id);
+
+    Listing unpublish(UUID id);
 }

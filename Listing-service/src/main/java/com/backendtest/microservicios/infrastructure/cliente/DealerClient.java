@@ -17,17 +17,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 public interface DealerClient {
     
     @GetMapping("/")
-    public ResponseEntity<List<Dealer>> listarTodos();
+    public ResponseEntity<List<Dealer>> getAll();
 
     @GetMapping("/{idDealer}")
-    public ResponseEntity<Dealer> obtenerPorId(@PathVariable(name = "idDealer") UUID idDealer);
+    public ResponseEntity<Dealer> getById(@PathVariable(name = "idDealer") UUID idDealer);
 
     @PostMapping("/")
-    public ResponseEntity<Dealer> registrar(Dealer dealerRequest);
+    public ResponseEntity<Dealer> create(Dealer dealerRequest);
 
     @PutMapping("/")
-    public ResponseEntity<Dealer> actualizar(Dealer dealerRequest);
+    public ResponseEntity<Dealer> update(Dealer dealerRequest);
 
     @DeleteMapping("/{idDealer}")
-    public ResponseEntity<Dealer> eliminar(@PathVariable(name = "idDealer") UUID idDealer);
+    public ResponseEntity<Dealer> remove(@PathVariable(name = "idDealer") UUID idDealer);
 }

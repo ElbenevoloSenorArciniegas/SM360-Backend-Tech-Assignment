@@ -35,9 +35,9 @@ class ListingControllerExceptionHandler{
             .body(exception.getMessage());
     }
 
-    @ExceptionHandler(DealerNotRegistredException.class)
+    @ExceptionHandler(DealerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handleDealerNotRegistredException(DealerNotRegistredException exception) {
+    public ResponseEntity<String> handleDealerNotFoundException(DealerNotFoundException exception) {
         LOGGER.error(exception.getMessage());
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
