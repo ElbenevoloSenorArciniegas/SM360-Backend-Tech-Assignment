@@ -10,7 +10,6 @@ import com.backendtest.microservicios.domain.Dealer;
 import com.backendtest.microservicios.domain.Listing;
 import com.backendtest.microservicios.domain.PublicationMethod;
 import com.backendtest.microservicios.domain.State;
-import com.backendtest.microservicios.domain.exception.DealerClientNotAviable;
 import com.backendtest.microservicios.domain.exception.ListingNotFoundException;
 import com.backendtest.microservicios.domain.exception.PublicationMethodNotSuportedException;
 import com.backendtest.microservicios.domain.exception.TierLimitException;
