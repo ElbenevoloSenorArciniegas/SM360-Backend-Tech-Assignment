@@ -40,11 +40,8 @@ public class ListingPostgresMediator implements ListingRepositoryInterface{
 
     @Override
     public Optional<Listing> findById(UUID id) {
-        Optional<ListingPostgresEntity> opcionalListingEntityReturn = listingRepository.findById(id);
-
-        return Optional.ofNullable(
-            listingMapper.toDomain(opcionalListingEntityReturn.get())
-        );
+        return listingRepository.findById(id)
+            .map((listingEntity) -> listingMapper.toDomain(listingEntity));
     }
 
     @Override

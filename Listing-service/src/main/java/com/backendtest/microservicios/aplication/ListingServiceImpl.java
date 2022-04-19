@@ -1,7 +1,6 @@
 package com.backendtest.microservicios.aplication;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -17,6 +16,7 @@ import com.backendtest.microservicios.domain.exception.TierLimitException;
 import com.backendtest.microservicios.infrastructure.cliente.DealerClient;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,7 +24,8 @@ public class ListingServiceImpl implements ListingServiceInterface{
 
     Logger LOG = Logger.getLogger("ListingServiceImpl");
 
-    private int TIER_LIMIT = 5;
+    @Value( "${listing.tierLimit}" )
+    private int TIER_LIMIT;
 
     @Autowired
     private ListingRepositoryInterface listingRepository;
@@ -45,11 +46,8 @@ public class ListingServiceImpl implements ListingServiceInterface{
 
     @Override
     public Listing getById(UUID id){
-        Optional<Listing> listing = listingRepository.findById(id);
-        if(listing.isPresent()){
-            return listing.get();
-        }
-        throw new ListingNotFoundException("Not found Listing with id "+id);
+        return listingRepository.findById(id)
+            .orElseThrow(() -> new ListingNotFoundException("Not found Listing with id "+id));
     }
 
     @Override
@@ -86,7 +84,9 @@ public class ListingServiceImpl implements ListingServiceInterface{
     private Listing searchDealer(Listing listing){
         if(listing.hasEmptyDealer()){
             Dealer dealerReturn = dealerClient.getById(listing.getDealer().getId()).getBody();
-            listing.setDealer(dealerReturn);
+            if(!dealerReturn.isDefaultClientResponse()){
+                listing.setDealer(dealerReturn);
+            }
         }
         return listing;
     }

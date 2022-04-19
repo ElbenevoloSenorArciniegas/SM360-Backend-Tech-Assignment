@@ -23,7 +23,6 @@ public class Listing implements Serializable{
     private String vehicle;
     @Positive
     private Double price;
-    @NotBlank
     private Date createdAt;
     private State state;
     

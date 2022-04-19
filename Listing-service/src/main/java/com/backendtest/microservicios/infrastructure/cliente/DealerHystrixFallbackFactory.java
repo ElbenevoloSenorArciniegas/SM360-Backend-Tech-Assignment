@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DealerHystrixFallbackFactory implements DealerClient{
 
-    private Dealer defaultNoneDealer = Dealer.builder().id(UUID.randomUUID()).name("none").build();
+    private Dealer defaultNoneDealer = Dealer.getDefaultResponse();
 
     @Override
     public ResponseEntity<List<Dealer>> getAll() {

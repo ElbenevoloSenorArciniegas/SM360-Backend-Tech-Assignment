@@ -15,4 +15,14 @@ public class Dealer{
     
     private UUID id;
     private String name;
+
+    private static final String DEFAULT_NAME = "none";
+
+    public boolean isDefaultClientResponse(){
+        return this.name.equals(DEFAULT_NAME);
+    }
+
+    public static Dealer getDefaultResponse(){
+        return Dealer.builder().id(UUID.randomUUID()).name(DEFAULT_NAME).build();
+    }
 }
