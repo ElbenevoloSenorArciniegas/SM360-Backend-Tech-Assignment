@@ -5,14 +5,18 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.logging.Logger;
 
+import javax.transaction.NotSupportedException;
 import javax.transaction.Transactional;
 
 import com.backendtest.microservicios.domain.Dealer;
 import com.backendtest.microservicios.domain.Listing;
+import com.backendtest.microservicios.domain.PublicationMethod;
 import com.backendtest.microservicios.domain.State;
 import com.backendtest.microservicios.domain.exception.DealerNotFoundException;
 import com.backendtest.microservicios.domain.exception.ListingNotFoundException;
 import com.backendtest.microservicios.domain.exception.ListingYetRegistredException;
+import com.backendtest.microservicios.domain.exception.PublicationMethodNotSuportedException;
+import com.backendtest.microservicios.domain.exception.TierLimitException;
 import com.backendtest.microservicios.infrastructure.cliente.DealerClient;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,8 @@ import org.springframework.stereotype.Service;
 public class ListingServiceImpl implements ListingServiceInterface{
 
     Logger LOG = Logger.getLogger("ListingServiceImpl");
+
+    int TIER_LIMIT = 5;
 
     @Autowired
     private ListingRepositoryInterface listingRepository;
@@ -37,7 +43,7 @@ public class ListingServiceImpl implements ListingServiceInterface{
         //No exception, great, continue
         listing.setCreatedAtNow();
         listing.setStateDefault();
-        return listingRepository.save(listing);
+        return this.save(listing);
     }
 
     @Override
@@ -54,12 +60,14 @@ public class ListingServiceImpl implements ListingServiceInterface{
             }).collect(Collectors.toList());*/
     }
 
+    /*
+        MUST ORDER BY DATE FROM NEWER TO OLDER
+    */
     @Override
     public List<Listing> getAllByDealerAndState(UUID dealerId, State state) {
-        // TODO Auto-generated method stub
-        return null;
-        /*return listingRepository.findByEdadGreaterThanEqual(edad).stream().map(listing -> { 
-            return buscarDealer(listing); 
+        return listingRepository.findByDealerAndStateOrderByCreatedAt(dealerId, state);
+        /*return listingRepository.findByDealerAndState(dealerId, state).stream().map(listing -> { 
+            return searchDealer(listing); 
         }).collect(Collectors.toList());*/
     }
 
@@ -69,7 +77,7 @@ public class ListingServiceImpl implements ListingServiceInterface{
         //Revisa si existe, si no, lanza excepción
         listing = searchDealer(listing);
         //No exception, great, continue
-        return listingRepository.save(listing);
+        return this.save(listing);
     }
 
     @Override
@@ -96,16 +104,49 @@ public class ListingServiceImpl implements ListingServiceInterface{
             * or publish a listing, but unpublish the oldest listing of a dealer to conform to the tier limit.
     */
     @Override
-    public Listing publish(UUID id) {
-        // TODO Auto-generated method stub
-        return null;
+    public Listing publish(UUID id, PublicationMethod publicationMethod) {
+        
+        Listing listingRegistrado = this.getById(id);
+
+        List<Listing> currentPublishedList = this.getAllByDealerAndState(listingRegistrado.getDealer().getId(), State.PUBLISHED);
+
+        if(currentPublishedList.size() == TIER_LIMIT){
+            this.resolvePublication(currentPublishedList, publicationMethod);
+        }
+
+        listingRegistrado.publish();
+        listingRegistrado = this.save(listingRegistrado);
+
+        return listingRegistrado;
+    }
+
+    private void resolvePublication(List<Listing> currentPublishedList, PublicationMethod publicationMethod){
+        
+        if(publicationMethod == PublicationMethod.THROWS_ERROR){
+            throw new TierLimitException("Max Tier limit");
+        }
+
+        if(publicationMethod == PublicationMethod.REPLACE_LAST){
+            Listing last = currentPublishedList.get(TIER_LIMIT - 1);
+            this.saveUnpublish(last);
+            return;
+        }
+
+        throw new PublicationMethodNotSuportedException("The method for publication conflicts is not supported");
     }
 
     @Override
     public Listing unpublish(UUID id) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.saveUnpublish(this.getById(id));
     }
     
-    
+    private Listing save(Listing listing){
+        return listingRepository.save(listing);
+    }
+
+    private Listing saveUnpublish(Listing listing){
+        listing.unpublish();
+        listing = this.save(listing);
+        return listing;
+    }
 }

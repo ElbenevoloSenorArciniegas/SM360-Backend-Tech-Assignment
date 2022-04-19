@@ -16,6 +16,6 @@ public interface ListingRepositoryInterface {
 
     void delete(Listing listing);
 
-    List<Listing> findByDealerAndState(UUID idDealer, State state);
+    List<Listing> findByDealerAndStateOrderByCreatedAt(UUID idDealer, State state);
     
 }

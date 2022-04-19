@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import com.backendtest.microservicios.aplication.ListingServiceInterface;
 import com.backendtest.microservicios.domain.Listing;
+import com.backendtest.microservicios.domain.PublicationMethod;
 import com.backendtest.microservicios.infrastructure.util.ErrorMessagesFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +57,9 @@ public class ListingController {
         return ResponseEntity.status(HttpStatus.OK).body(listingService.update(listingRequest));
     }
 
-    @PutMapping("/public/{idListing}")
-    public ResponseEntity<Listing> publish(@PathVariable(name = "idListing") UUID idListing){
-        return ResponseEntity.status(HttpStatus.OK).body(listingService.publish(idListing));
+    @PutMapping("/public/{idListing}/{publicationMethod}")
+    public ResponseEntity<Listing> publish(@PathVariable(name = "idListing") UUID idListing, @PathVariable(name = "publicationMethod") PublicationMethod publicationMethod){
+        return ResponseEntity.status(HttpStatus.OK).body(listingService.publish(idListing, publicationMethod));
     }
 
     @PutMapping("/draft/{idListing}")

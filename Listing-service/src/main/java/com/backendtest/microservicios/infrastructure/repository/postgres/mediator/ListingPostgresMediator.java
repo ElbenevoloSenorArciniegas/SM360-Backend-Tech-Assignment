@@ -50,8 +50,11 @@ public class ListingPostgresMediator implements ListingRepositoryInterface{
 
     @Override
     public List<Listing> findAll() {
-        LOG.info("Listings: "+listingRepository.findAll().size());
-        return listingRepository.findAll().stream().map(listingEntity -> {
+        List<ListingPostgresEntity> listingEntityList = listingRepository.findAll();
+        
+        LOG.info("Listings: "+listingEntityList.size());
+        
+        return listingEntityList.stream().map(listingEntity -> {
             return listingMapper.toDomain(listingEntity); 
         }).collect(Collectors.toList());
     }
@@ -62,9 +65,14 @@ public class ListingPostgresMediator implements ListingRepositoryInterface{
     }
 
     @Override
-    public List<Listing> findByDealerAndState(UUID idDealer, State state) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Listing> findByDealerAndStateOrderByCreatedAt(UUID idDealer, State state) {
+        List<ListingPostgresEntity> listingEntityList = listingRepository.findByDealerAndStateOrderByCreatedAt(idDealer, state.toString());
+        
+        LOG.info("Listings: "+listingEntityList.size());
+
+        return listingEntityList.stream().map(listingEntity -> {
+            return listingMapper.toDomain(listingEntity); 
+        }).collect(Collectors.toList());
     }
     
 }

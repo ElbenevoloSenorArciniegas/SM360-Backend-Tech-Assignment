@@ -12,9 +12,11 @@ import com.backendtest.microservicios.aplication.ListingRepositoryInterface;
 import com.backendtest.microservicios.aplication.ListingServiceImpl;
 import com.backendtest.microservicios.domain.Dealer;
 import com.backendtest.microservicios.domain.Listing;
+import com.backendtest.microservicios.domain.PublicationMethod;
 import com.backendtest.microservicios.domain.State;
 import com.backendtest.microservicios.domain.exception.DealerNotFoundException;
 import com.backendtest.microservicios.domain.exception.ListingNotFoundException;
+import com.backendtest.microservicios.domain.exception.TierLimitException;
 import com.backendtest.microservicios.infrastructure.cliente.DealerClient;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -87,7 +89,7 @@ public class ListingServiceImplTest {
         );
 
         //Mock the listing searching
-        Mockito.when(listingRepository.findByDealerAndState(this.idDealer, State.PUBLISHED)).thenReturn(this.listOfDealerAndPublished);
+        Mockito.when(listingRepository.findByDealerAndStateOrderByCreatedAt(this.idDealer, State.PUBLISHED)).thenReturn(this.listOfDealerAndPublished);
     }
 
     @Test
@@ -161,9 +163,18 @@ public class ListingServiceImplTest {
     }
 
     @Test
-    void whenPublish_withFoundListing_thenPublish() {
+    void whenPublish_withFoundListing_whitMethodTrhowsError_thenTrhowsTierLimitException() {
 
-        Listing publishedListing = listingService.publish(this.idListing);
+        //Wait for a TierLimitException
+        Exception exception = assertThrows(TierLimitException.class, () -> {
+            listingService.publish(this.idListing, PublicationMethod.THROWS_ERROR);
+        });
+    }
+
+    @Test
+    void whenPublish_withFoundListing_whitMethodReplaceLast_thenPublish() {
+
+        Listing publishedListing = listingService.publish(this.idListing, PublicationMethod.REPLACE_LAST);
 
         assertEquals(State.PUBLISHED, publishedListing.getState());
     }
@@ -187,7 +198,7 @@ public class ListingServiceImplTest {
     void whenGetAllByDealerAndStatedListing_withNotFoundDealer_withFoundState_thenEmpty() {
 
         //Override the mock for the listing searching
-        Mockito.when(listingRepository.findByDealerAndState(Mockito.any(UUID.class), State.PUBLISHED)).thenReturn(new ArrayList<>());
+        Mockito.when(listingRepository.findByDealerAndStateOrderByCreatedAt(Mockito.any(UUID.class), State.PUBLISHED)).thenReturn(new ArrayList<>());
 
         List<Listing> list = listingService.getAllByDealerAndState(UUID.randomUUID(), State.PUBLISHED);
         assertTrue(list.isEmpty());
@@ -197,7 +208,7 @@ public class ListingServiceImplTest {
     void whenGetAllByDealerAndStatedListing_withFoundDealer_withNotFoundState_thenEmpty() {
 
         //Override the mock for the listing searching
-        Mockito.when(listingRepository.findByDealerAndState(this.idDealer, Mockito.any(State.class))).thenReturn(new ArrayList<>());
+        Mockito.when(listingRepository.findByDealerAndStateOrderByCreatedAt(this.idDealer, Mockito.any(State.class))).thenReturn(new ArrayList<>());
 
         List<Listing> list = listingService.getAllByDealerAndState(this.idDealer, State.PUBLISHED);
         assertTrue(list.isEmpty());

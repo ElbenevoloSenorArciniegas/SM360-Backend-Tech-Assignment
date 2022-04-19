@@ -10,6 +10,28 @@
             "projectName": "config-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ListingApplication<listing-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.backendtest.microservicios.ListingApplication",
+            "projectName": "listing-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-RegistryServiceApplication<registry-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.backendtest.microservicios.registry.RegistryServiceApplication",
+            "projectName": "registry-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

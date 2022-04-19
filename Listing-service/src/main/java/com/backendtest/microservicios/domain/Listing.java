@@ -37,6 +37,14 @@ public class Listing implements Serializable{
         this.createdAt = new Date();
     }
 
+    public void publish(){
+        this.state = State.PUBLISHED;
+    }
+
+    public void unpublish(){
+        this.setStateDefault();
+    }
+
     public boolean hasDealer(){
         return this.dealer != null;
     }

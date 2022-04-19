@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.backendtest.microservicios.domain.Listing;
+import com.backendtest.microservicios.domain.PublicationMethod;
 import com.backendtest.microservicios.domain.State;
 
 public interface ListingServiceInterface {
@@ -20,7 +21,7 @@ public interface ListingServiceInterface {
 
     Listing remove(UUID id);
 
-    Listing publish(UUID id);
+    Listing publish(UUID id, PublicationMethod publicationMethod);
 
     Listing unpublish(UUID id);
 }

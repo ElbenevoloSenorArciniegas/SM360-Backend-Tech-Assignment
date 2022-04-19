@@ -44,6 +44,15 @@ class ListingControllerExceptionHandler{
             .body(exception.getMessage());
     }
 
+    @ExceptionHandler(TierLimitException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleTierLimitException(TierLimitException exception) {
+        LOGGER.error(exception.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.NOT_ACCEPTABLE)
+            .body(exception.getMessage());
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleResponseStatusException(ResponseStatusException exception) {
