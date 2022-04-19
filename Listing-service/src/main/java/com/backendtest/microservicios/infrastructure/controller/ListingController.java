@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import com.backendtest.microservicios.aplication.ListingServiceInterface;
 import com.backendtest.microservicios.domain.Listing;
 import com.backendtest.microservicios.domain.PublicationMethod;
+import com.backendtest.microservicios.domain.State;
 import com.backendtest.microservicios.infrastructure.util.ErrorMessagesFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,11 @@ public class ListingController {
     @GetMapping("/{idListing}")
     public ResponseEntity<Listing> getById(@PathVariable(name = "idListing") UUID idListing){
         return ResponseEntity.status(HttpStatus.OK).body(listingService.getById(idListing));
+    }
+
+    @GetMapping("/{idDealer}/{state}")
+    public ResponseEntity<List<Listing>> getAllByDealerAndState(@PathVariable(name = "idDealer") UUID idDealer, @PathVariable(name = "state") State state){
+        return ResponseEntity.status(HttpStatus.OK).body(listingService.getAllByDealerAndState(idDealer, state));
     }
 
     @PostMapping("/")
