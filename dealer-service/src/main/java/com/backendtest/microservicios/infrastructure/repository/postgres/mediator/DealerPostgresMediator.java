@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 
 import com.backendtest.microservicios.aplication.service.DealerRepositoryInterface;
 import com.backendtest.microservicios.domain.Dealer;
-import com.backendtest.microservicios.domain.exception.DealerNoEncontradoException;
-import com.backendtest.microservicios.infrastructure.repository.postgres.entity.DealerPostgresEntity;
 import com.backendtest.microservicios.infrastructure.repository.postgres.mapper.DealerPostgresMapper;
 import com.backendtest.microservicios.infrastructure.repository.postgres.repository.DealerPostgresRepository;
 
@@ -33,12 +31,9 @@ public class DealerPostgresMediator implements DealerRepositoryInterface{
     }
 
     @Override
-    public Dealer findById(UUID id) {
-        Optional<DealerPostgresEntity> opcionalDealerReturn = dealerRepository.findById(id);
-        if(opcionalDealerReturn.isPresent()){
-            return dealerMapper.toDomain(opcionalDealerReturn.get());
-        }
-        throw new DealerNoEncontradoException("No existe un dealer con el id "+id);
+    public Optional<Dealer> findById(UUID id) {
+        return dealerRepository.findById(id)
+            .map((dealerEntity) -> dealerMapper.toDomain(dealerEntity));
     }
 
     @Override

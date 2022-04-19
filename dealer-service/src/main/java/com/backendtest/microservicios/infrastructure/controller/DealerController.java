@@ -31,33 +31,33 @@ public class DealerController {
     private DealerServiceInterface dealerService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Dealer>> listarTodos(){
-        return ResponseEntity.status(HttpStatus.OK).body(dealerService.listarTodos());
+    public ResponseEntity<List<Dealer>> getAll(){
+        return ResponseEntity.status(HttpStatus.OK).body(dealerService.getAll());
     }
 
     @GetMapping("/{idDealer}")
-    public ResponseEntity<Dealer> obtenerPorId(@PathVariable(name = "idDealer") UUID idDealer){
-        return ResponseEntity.status(HttpStatus.OK).body(dealerService.obtenerPorId(idDealer));
+    public ResponseEntity<Dealer> getById(@PathVariable(name = "idDealer") UUID idDealer){
+        return ResponseEntity.status(HttpStatus.OK).body(dealerService.getById(idDealer));
     }
 
     @PostMapping("/")
-    public ResponseEntity<Dealer> registrar(@Valid @RequestBody Dealer dealerRequest, BindingResult result){
+    public ResponseEntity<Dealer> create(@Valid @RequestBody Dealer dealerRequest, BindingResult result){
         if(result.hasErrors()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessagesFormatter.formatearMensajesToString(result));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(dealerService.registrar(dealerRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(dealerService.create(dealerRequest));
     }
     
     @PutMapping("/")
-    public ResponseEntity<Dealer> actualizar(@Valid @RequestBody Dealer dealerRequest, BindingResult result){
+    public ResponseEntity<Dealer> update(@Valid @RequestBody Dealer dealerRequest, BindingResult result){
         if(result.hasErrors()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessagesFormatter.formatearMensajesToString(result));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(dealerService.actualizar(dealerRequest));
+        return ResponseEntity.status(HttpStatus.OK).body(dealerService.update(dealerRequest));
     }
 
     @DeleteMapping("/{idDealer}")
-    public ResponseEntity<Dealer> eliminar(@PathVariable(name = "idDealer") UUID idDealer){
-        return ResponseEntity.status(HttpStatus.OK).body(dealerService.eliminar(idDealer));
+    public ResponseEntity<Dealer> delete(@PathVariable(name = "idDealer") UUID idDealer){
+        return ResponseEntity.status(HttpStatus.OK).body(dealerService.delete(idDealer));
     }
 }

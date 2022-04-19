@@ -36,7 +36,7 @@ public class ListingServiceImpl implements ListingServiceInterface{
     @Override
     @Transactional
     public Listing create(Listing listing) {
-        
+        //TODO how to check if a listing already exist and not creating copies
         listing = searchDealer(listing);
         //No exception, great, continue
         listing.setCreatedAtNow();

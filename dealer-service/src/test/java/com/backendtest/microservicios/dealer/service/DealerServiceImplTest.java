@@ -5,13 +5,13 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import com.backendtest.microservicios.aplication.service.DealerRepositoryInterface;
 import com.backendtest.microservicios.aplication.service.DealerServiceImpl;
 import com.backendtest.microservicios.domain.Dealer;
-import com.backendtest.microservicios.domain.exception.DealerNoEncontradoException;
-import com.backendtest.microservicios.domain.exception.DealerYaRegistradaException;
+import com.backendtest.microservicios.domain.exception.DealerNotFoundException;
 
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +24,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class DealerServiceImplTest {
     
+    UUID idDealer = UUID.randomUUID();
+    String nameDealer = "Jhon Dealer";
+    Dealer registredDealer;
+    Dealer requestDealer;
+
     @Mock
     private DealerRepositoryInterface dealerRepository;
 
@@ -33,53 +38,55 @@ public class DealerServiceImplTest {
     @BeforeEach
     public void setup(){
         MockitoAnnotations.openMocks(this);
+
+        this.requestDealer = Dealer.builder().name(this.nameDealer).build();
+
+        this.registredDealer = Dealer.builder().id(this.idDealer).name(this.nameDealer).build();
+
+        //Mock the save method
+        Mockito.when(dealerRepository.save(this.requestDealer)).thenReturn(this.registredDealer);
+
+        //Mock the dealer searching
+        Mockito.when(dealerRepository.findById(this.idDealer)).thenReturn(Optional.of(this.registredDealer));
     }
 
     @Test
-    void whenRegistrar_withDealerNueva_thenRegistrar() {
-        UUID idDealer= UUID.randomUUID();
-        String nameDealer = "name";
+    void whenCreate_withNewDealer_thenCreate() {
 
-        Dealer dealerARegistrar = Dealer.builder().name(nameDealer).build();
-        Dealer dealerRegistrada = Dealer.builder().id(idDealer).name(nameDealer).build();
-
-        //Decimos que no existe actualmente una dealer con ese id
-        Mockito.when(dealerRepository.findById(dealerARegistrar.getId()
-        )).thenThrow(new DealerNoEncontradoException("No existe un dealer con el id"));
-
-        //Mockeamos el método save
-        Mockito.when(dealerRepository.save(dealerARegistrar)).thenReturn(dealerRegistrada);
-
-        //Y probamos que retorne lo mismo sin lanzar excepciones
-        assertEquals(nameDealer, dealerService.registrar(dealerARegistrar).getName());
-        //Y que traiga un id autogenerado
-        assertNotNull(dealerService.registrar(dealerRegistrada).getId());
-    }
-
-    @Test
-    void whenRegistrar_withDealerRegistrada_thenTrhowDealerYaRegistradaException() {
-        UUID idDealer= UUID.randomUUID();
-        String nameDealer = "name";
-
-        Dealer dealerARegistrar = Dealer.builder().id(idDealer).name(nameDealer).build();
-
-        //Decimos que no existe actualmente una dealer con ese id
-        Mockito.when(dealerRepository.findById(dealerARegistrar.getId()
-        )).thenReturn(dealerARegistrar);
-
-        //Y esperamos una excepción de DealerYaRegistradaException
+        Dealer returnDealer = dealerService.create(this.requestDealer);
+        //Testing the same name
+        assertEquals(this.nameDealer, returnDealer.getName());
         
-        Exception exception = assertThrows(DealerYaRegistradaException.class, () -> {
-            dealerService.registrar(dealerARegistrar);
+        //And gets an id
+        assertNotNull(returnDealer.getId());
+    }
+
+    @Test
+    void whenListById_withFoundDealer_thenReturn() {
+
+        Dealer returnDealer = dealerService.getById(this.idDealer);
+        //No exeption
+        assertEquals(this.registredDealer, returnDealer);
+    }
+
+    @Test
+    void whenListById_withNotFoundDealer_thenThrowDealerNotFoundException() {
+
+        //Override the mock for the dealer searching
+        Mockito.when(dealerRepository.findById(this.idDealer)).thenReturn(Optional.empty());
+
+        //Wait for a ListingNotFoundException
+        Exception exception = assertThrows(DealerNotFoundException.class, () -> {
+            dealerService.getById(this.idDealer);
         });
     
-        String expectedMessage = "Ya existe una dealer registrada con el id";
+        String expectedMessage = "Not found Dealer with id ";
         String actualMessage = exception.getMessage();
     
         assertTrue(actualMessage.contains(expectedMessage));
 
-        //Nos aseguramos de que el mensaje tenga los campos que estamos pasando, para más semántica
-        assertTrue(actualMessage.contains(dealerARegistrar.getId().toString()));
+        //Got the id in the message for semantic
+        assertTrue(actualMessage.contains(this.idDealer.toString()));
     }
 
 }

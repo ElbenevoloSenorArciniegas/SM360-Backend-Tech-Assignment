@@ -19,4 +19,8 @@ public class Dealer{
 
     @NotBlank
     private String name;
+
+    public void removeId(){
+        this.id = null;
+    }
 }

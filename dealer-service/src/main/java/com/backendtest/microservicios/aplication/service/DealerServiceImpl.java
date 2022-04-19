@@ -5,8 +5,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import com.backendtest.microservicios.domain.Dealer;
-import com.backendtest.microservicios.domain.exception.DealerNoEncontradoException;
-import com.backendtest.microservicios.domain.exception.DealerYaRegistradaException;
+import com.backendtest.microservicios.domain.exception.DealerNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,35 +21,32 @@ public class DealerServiceImpl implements DealerServiceInterface{
 
     @Override
     @Transactional
-    public Dealer registrar(Dealer dealer) {
-        try {
-            obtenerPorId(dealer.getId());
-            throw new DealerYaRegistradaException("Ya existe una dealer registrada con el id "+dealer.getId());
-        } catch (DealerNoEncontradoException e) {
-            dealer.setId(null); //Evita que se guarden las imágenes con id 0. Obliga a autogenerar un id
-            return dealerRepository.save(dealer);
-        }
-    }
-
-    @Override
-    public Dealer obtenerPorId(UUID id){
-        return dealerRepository.findById(id);
-    }
-
-    @Override
-    public List<Dealer> listarTodos() {
-        return dealerRepository.findAll();
-    }
-
-    @Override
-    public Dealer actualizar(Dealer dealer){
-        obtenerPorId(dealer.getId()); //Revisa si existe, si no, lanza excepción
+    public Dealer create(Dealer dealer) {
+        dealer.removeId(); //I need it? Dunno, I don't think so, but...
+        //TODO how to check if a dealer already exist and not creating copies
         return dealerRepository.save(dealer);
     }
 
     @Override
-    public Dealer eliminar(UUID id){
-        Dealer dealerRegistrada = obtenerPorId(id); //Revisa si existe, si no, lanza excepción
+    public Dealer getById(UUID id){
+        return dealerRepository.findById(id)
+            .orElseThrow(() -> new DealerNotFoundException("Not found Dealer with id "+id));
+    }
+
+    @Override
+    public List<Dealer> getAll() {
+        return dealerRepository.findAll();
+    }
+
+    @Override
+    public Dealer update(Dealer dealer){
+        getById(dealer.getId()); //Check if exists. If not found, throws exception
+        return dealerRepository.save(dealer);
+    }
+
+    @Override
+    public Dealer delete(UUID id){
+        Dealer dealerRegistrada = getById(id); //Check if exists. If not found, throws exception
         dealerRepository.delete(dealerRegistrada);
         return dealerRegistrada;
     }

@@ -7,13 +7,13 @@ import com.backendtest.microservicios.domain.Dealer;
 
 public interface DealerServiceInterface {
     
-    Dealer registrar(Dealer dealer);
+    Dealer create(Dealer dealer);
 
-    Dealer obtenerPorId(UUID id);
+    Dealer getById(UUID id);
 
-    List<Dealer> listarTodos();
+    List<Dealer> getAll();
 
-    Dealer actualizar(Dealer dealer);
+    Dealer update(Dealer dealer);
 
-    Dealer eliminar(UUID id);
+    Dealer delete(UUID id);
 }
