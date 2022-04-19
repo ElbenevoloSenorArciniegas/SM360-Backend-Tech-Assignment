@@ -17,15 +17,6 @@ class ListingControllerExceptionHandler{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListingControllerExceptionHandler.class);
 
-    @ExceptionHandler(ListingYetRegistredException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleListingYetRegistredException(ListingYetRegistredException exception) {
-        LOGGER.error(exception.getMessage());
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(exception.getMessage());
-    }
-
     @ExceptionHandler(ListingNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleListingNotFoundException(ListingNotFoundException exception) {

@@ -1,6 +1,7 @@
 package com.backendtest.microservicios.aplication;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.backendtest.microservicios.domain.Listing;
@@ -10,7 +11,7 @@ public interface ListingRepositoryInterface {
 
     Listing save(Listing listing);
 
-    Listing findById(UUID id);
+    Optional<Listing> findById(UUID id);
 
     List<Listing> findAll();
 

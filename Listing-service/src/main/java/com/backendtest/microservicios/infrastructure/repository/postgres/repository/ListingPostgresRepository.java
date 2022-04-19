@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ListingPostgresRepository extends JpaRepository<ListingPostgresEntity, UUID>{
 
-    @Query("SELECT * FROM Listing l "
+    @Query("SELECT l.id, l.vehicle, l.price, l.createdAt, l.state, l.dealerId FROM ListingPostgresEntity l "
         + " WHERE l.dealerId = :dealerId AND l.state = :state "
         + " ORDER BY l.createdAt ")
     List<ListingPostgresEntity> findByDealerAndStateOrderByCreatedAt(@Param("dealerId") UUID dealerId, @Param("state") String state);

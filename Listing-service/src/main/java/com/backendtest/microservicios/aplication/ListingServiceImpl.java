@@ -1,20 +1,17 @@
 package com.backendtest.microservicios.aplication;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.logging.Logger;
 
-import javax.transaction.NotSupportedException;
 import javax.transaction.Transactional;
 
 import com.backendtest.microservicios.domain.Dealer;
 import com.backendtest.microservicios.domain.Listing;
 import com.backendtest.microservicios.domain.PublicationMethod;
 import com.backendtest.microservicios.domain.State;
-import com.backendtest.microservicios.domain.exception.DealerNotFoundException;
 import com.backendtest.microservicios.domain.exception.ListingNotFoundException;
-import com.backendtest.microservicios.domain.exception.ListingYetRegistredException;
 import com.backendtest.microservicios.domain.exception.PublicationMethodNotSuportedException;
 import com.backendtest.microservicios.domain.exception.TierLimitException;
 import com.backendtest.microservicios.infrastructure.cliente.DealerClient;
@@ -27,7 +24,7 @@ public class ListingServiceImpl implements ListingServiceInterface{
 
     Logger LOG = Logger.getLogger("ListingServiceImpl");
 
-    int TIER_LIMIT = 5;
+    private int TIER_LIMIT = 5;
 
     @Autowired
     private ListingRepositoryInterface listingRepository;
@@ -48,16 +45,16 @@ public class ListingServiceImpl implements ListingServiceInterface{
 
     @Override
     public Listing getById(UUID id){
-        return listingRepository.findById(id);
-        //return searchDealer(listingRepository.findById(id));
+        Optional<Listing> listing = listingRepository.findById(id);
+        if(listing.isPresent()){
+            return listing.get();
+        }
+        throw new ListingNotFoundException("Not found Listing with id "+id);
     }
 
     @Override
     public List<Listing> getAll() {
         return listingRepository.findAll();
-        /*return listingRepository.findAll().stream().map(listing -> {
-                return buscarDealer(listing); 
-            }).collect(Collectors.toList());*/
     }
 
     /*
@@ -66,24 +63,22 @@ public class ListingServiceImpl implements ListingServiceInterface{
     @Override
     public List<Listing> getAllByDealerAndState(UUID dealerId, State state) {
         return listingRepository.findByDealerAndStateOrderByCreatedAt(dealerId, state);
-        /*return listingRepository.findByDealerAndState(dealerId, state).stream().map(listing -> { 
-            return searchDealer(listing); 
-        }).collect(Collectors.toList());*/
     }
 
     @Override
     public Listing update(Listing listing){
-        getById(listing.getId()); 
+        this.getById(listing.getId()); 
         //Revisa si existe, si no, lanza excepción
         listing = searchDealer(listing);
         //No exception, great, continue
+        listing.setCreatedAtNow();
         return this.save(listing);
     }
 
     @Override
     @Transactional
     public Listing remove(UUID id){
-        Listing listingRegistrado = getById(id);
+        Listing listingRegistrado = this.getById(id);
         listingRepository.delete(listingRegistrado);
         return listingRegistrado;
     }
@@ -148,5 +143,9 @@ public class ListingServiceImpl implements ListingServiceInterface{
         listing.unpublish();
         listing = this.save(listing);
         return listing;
+    }
+
+    public void changeTierLimit(int tierLimit){
+        this.TIER_LIMIT = tierLimit;
     }
 }

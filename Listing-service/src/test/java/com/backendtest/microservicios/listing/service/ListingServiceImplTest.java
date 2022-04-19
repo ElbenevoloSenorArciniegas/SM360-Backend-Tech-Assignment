@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.backendtest.microservicios.aplication.ListingRepositoryInterface;
@@ -65,7 +66,7 @@ public class ListingServiceImplTest {
         Mockito.when(listingRepository.save(this.listingARegistrar)).thenReturn(this.listingARegistrar);
 
         //Mock the listing searching
-        Mockito.when(listingRepository.findById(this.idListing)).thenReturn(this.listingARegistrar);
+        Mockito.when(listingRepository.findById(this.idListing)).thenReturn(Optional.of(this.listingARegistrar));
 
         //Mock the dealer searching
         Mockito.when(dealerClient.getById(this.idDealer)).thenReturn(ResponseEntity.ok(this.registredDealer));
@@ -132,7 +133,7 @@ public class ListingServiceImplTest {
     void whenUpdate_withFoundListing_thenUpdate() {
 
         //Mock the dealer searching
-        Mockito.when(listingRepository.findById(this.idListing)).thenReturn(this.listingARegistrar);
+        Mockito.when(listingRepository.findById(this.idListing)).thenReturn(Optional.of(this.listingARegistrar));
 
         Listing updatedListing = listingService.update(this.listingARegistrar);
 
@@ -146,11 +147,11 @@ public class ListingServiceImplTest {
     void whenUpdate_withNotFoundListing_thenTrhowsListingNotFoundException() {
 
         //Override the mock for the listing searching
-        Mockito.when(listingRepository.findById(this.idListing)).thenReturn(null);
+        Mockito.when(listingRepository.findById(this.idListing)).thenReturn(Optional.empty());
 
         //Wait for a ListingNotFoundException
         Exception exception = assertThrows(ListingNotFoundException.class, () -> {
-            listingService.create(listingARegistrar);
+            listingService.update(listingARegistrar);
         });
     
         String expectedMessage = "Not found Listing with id ";
@@ -165,18 +166,30 @@ public class ListingServiceImplTest {
     @Test
     void whenPublish_withFoundListing_whitMethodTrhowsError_thenTrhowsTierLimitException() {
 
+        listingService.changeTierLimit(listOfDealerAndPublished.size());
+
         //Wait for a TierLimitException
         Exception exception = assertThrows(TierLimitException.class, () -> {
             listingService.publish(this.idListing, PublicationMethod.THROWS_ERROR);
         });
+
+        String expectedMessage = "Max Tier limit";
+        String actualMessage = exception.getMessage();
+    
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
     void whenPublish_withFoundListing_whitMethodReplaceLast_thenPublish() {
 
-        Listing publishedListing = listingService.publish(this.idListing, PublicationMethod.REPLACE_LAST);
+        listingService.changeTierLimit(listOfDealerAndPublished.size());
 
+        Listing publishedListing = listingService.publish(this.idListing, PublicationMethod.REPLACE_LAST);
         assertEquals(State.PUBLISHED, publishedListing.getState());
+
+
+        Listing last = listOfDealerAndPublished.get(listOfDealerAndPublished.size()-1);
+        assertEquals(State.DRAFT, last.getState());
     }
 
     @Test
@@ -198,7 +211,7 @@ public class ListingServiceImplTest {
     void whenGetAllByDealerAndStatedListing_withNotFoundDealer_withFoundState_thenEmpty() {
 
         //Override the mock for the listing searching
-        Mockito.when(listingRepository.findByDealerAndStateOrderByCreatedAt(Mockito.any(UUID.class), State.PUBLISHED)).thenReturn(new ArrayList<>());
+        Mockito.when(listingRepository.findByDealerAndStateOrderByCreatedAt(Mockito.any(UUID.class), Mockito.eq(State.PUBLISHED))).thenReturn(new ArrayList<>());
 
         List<Listing> list = listingService.getAllByDealerAndState(UUID.randomUUID(), State.PUBLISHED);
         assertTrue(list.isEmpty());
@@ -208,7 +221,7 @@ public class ListingServiceImplTest {
     void whenGetAllByDealerAndStatedListing_withFoundDealer_withNotFoundState_thenEmpty() {
 
         //Override the mock for the listing searching
-        Mockito.when(listingRepository.findByDealerAndStateOrderByCreatedAt(this.idDealer, Mockito.any(State.class))).thenReturn(new ArrayList<>());
+        Mockito.when(listingRepository.findByDealerAndStateOrderByCreatedAt(Mockito.eq(this.idDealer), Mockito.any(State.class))).thenReturn(new ArrayList<>());
 
         List<Listing> list = listingService.getAllByDealerAndState(this.idDealer, State.PUBLISHED);
         assertTrue(list.isEmpty());

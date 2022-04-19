@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import com.backendtest.microservicios.aplication.ListingRepositoryInterface;
 import com.backendtest.microservicios.domain.Listing;
 import com.backendtest.microservicios.domain.State;
-import com.backendtest.microservicios.domain.exception.ListingNotFoundException;
 import com.backendtest.microservicios.infrastructure.repository.postgres.entity.ListingPostgresEntity;
 import com.backendtest.microservicios.infrastructure.repository.postgres.mapper.ListingPostgresMapper;
 import com.backendtest.microservicios.infrastructure.repository.postgres.repository.ListingPostgresRepository;
@@ -40,12 +39,12 @@ public class ListingPostgresMediator implements ListingRepositoryInterface{
     }
 
     @Override
-    public Listing findById(UUID id) {
-        Optional<ListingPostgresEntity> opcionalListingReturn = listingRepository.findById(id);
-        if(opcionalListingReturn.isPresent()){
-            return listingMapper.toDomain(opcionalListingReturn.get());
-        }
-        throw new ListingNotFoundException("No existe un listing con el id "+id);
+    public Optional<Listing> findById(UUID id) {
+        Optional<ListingPostgresEntity> opcionalListingEntityReturn = listingRepository.findById(id);
+
+        return Optional.ofNullable(
+            listingMapper.toDomain(opcionalListingEntityReturn.get())
+        );
     }
 
     @Override
