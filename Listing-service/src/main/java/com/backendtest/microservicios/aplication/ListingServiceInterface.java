@@ -1,6 +1,7 @@
 package com.backendtest.microservicios.aplication;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.backendtest.microservicios.domain.Listing;
 
@@ -8,7 +9,7 @@ public interface ListingServiceInterface {
     
     Listing registrar(Listing listing);
 
-    Listing obtenerPorId(Long id);
+    Listing obtenerPorId(UUID id);
 
     Listing obtenerPorTipoIdentificacionNumeroIdentificacion(String tipoIdentificacion, String numeroIdentificacion);
 
@@ -18,5 +19,5 @@ public interface ListingServiceInterface {
 
     Listing actualizar(Listing listing);
 
-    Listing eliminar(Long id);
+    Listing eliminar(UUID id);
 }

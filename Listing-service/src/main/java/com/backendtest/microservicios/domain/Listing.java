@@ -1,6 +1,7 @@
 package com.backendtest.microservicios.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.UUID;
 
 import javax.validation.constraints.NotBlank;
@@ -17,16 +18,14 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Listing implements Serializable{
     
-    private Long id;
-    private String nombre;
-    private String apellido;
-    @NotBlank(message = "El tipo de identificación no puede ser vacío")
-    private String tipoIdentificacion;
-    @NotBlank(message = "El número de identificación no puede ser vacío")
-    private String numeroIdentificacion;
-    @Positive(message = "La edad debe ser un número mayor que cero")
-    private int edad;
-    private String ciudadNacimiento;
+    private UUID id;
+    @NotBlank
+    private String vehicle;
+    @Positive
+    private Long price;
+    @NotBlank
+    private Date createdAt;
+    private State state;
     
     private Dealer dealer;
 

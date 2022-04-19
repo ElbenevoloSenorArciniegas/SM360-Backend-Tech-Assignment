@@ -1,6 +1,7 @@
 package com.backendtest.microservicios.infrastructure.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -35,7 +36,7 @@ public class ListingController {
     }
 
     @GetMapping("/{idListing}")
-    public ResponseEntity<Listing> obtenerPorId(@PathVariable(name = "idListing") Long idListing){
+    public ResponseEntity<Listing> obtenerPorId(@PathVariable(name = "idListing") UUID idListing){
         return ResponseEntity.status(HttpStatus.OK).body(listingService.obtenerPorId(idListing));
     }
 
@@ -66,7 +67,7 @@ public class ListingController {
     }
 
     @DeleteMapping("/{idListing}")
-    public ResponseEntity<Listing> eliminar(@PathVariable(name = "idListing") Long idListing){
+    public ResponseEntity<Listing> eliminar(@PathVariable(name = "idListing") UUID idListing){
         return ResponseEntity.status(HttpStatus.OK).body(listingService.eliminar(idListing));
     }
 }

@@ -2,6 +2,7 @@ package com.backendtest.microservicios.infrastructure.repository.postgres.mediat
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class ListingPostgresMediator implements ListingRepositoryInterface{
     }
 
     @Override
-    public Listing findById(Long id) {
+    public Listing findById(UUID id) {
         Optional<ListingPostgresEntity> opcionalListingReturn = listingRepository.findById(id);
         if(opcionalListingReturn.isPresent()){
             return listingMapper.toDomain(opcionalListingReturn.get());

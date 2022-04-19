@@ -1,6 +1,7 @@
 package com.backendtest.microservicios.aplication;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.logging.Logger;
 
@@ -32,8 +33,8 @@ public class ListingServiceImpl implements ListingServiceInterface{
     public Listing registrar(Listing listing) {
 
         try {
-            obtenerPorTipoIdentificacionNumeroIdentificacion(listing.getTipoIdentificacion(), listing.getNumeroIdentificacion());
-            throw new ListingYetRegistredException("Ya existe un listing registrado con el documento ["+listing.getTipoIdentificacion() + "  " + listing.getNumeroIdentificacion() + "]");
+            obtenerPorTipoIdentificacionNumeroIdentificacion("","");
+            throw new ListingYetRegistredException("Ya existe un listing registrado con el documento ["+"listing.getTipoIdentificacion()" + "  " + "listing.getNumeroIdentificacion()" + "]");
         } catch (ListingNotFoundException e) {
             //El listing no existe, guardarlo
             Dealer dealerRegistrada = dealerClient.registrar(listing.getDealer()).getBody();
@@ -48,7 +49,7 @@ public class ListingServiceImpl implements ListingServiceInterface{
     }
 
     @Override
-    public Listing obtenerPorId(Long id){
+    public Listing obtenerPorId(UUID id){
         return buscarDealer(listingRepository.findById(id));
     }
 
@@ -82,7 +83,7 @@ public class ListingServiceImpl implements ListingServiceInterface{
 
     @Override
     @Transactional
-    public Listing eliminar(Long id){
+    public Listing eliminar(UUID id){
         Listing listingRegistrado = obtenerPorId(id);
         listingRepository.delete(listingRegistrado);
         if(listingRegistrado.hasDealer()){
