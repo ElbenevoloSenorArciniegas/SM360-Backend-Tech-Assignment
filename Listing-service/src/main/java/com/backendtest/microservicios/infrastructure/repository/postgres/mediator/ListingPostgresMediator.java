@@ -62,7 +62,7 @@ public class ListingPostgresMediator implements ListingRepositoryInterface{
 
     @Override
     public List<Listing> findByDealerAndStateOrderByCreatedAt(UUID idDealer, State state) {
-        List<ListingPostgresEntity> listingEntityList = listingRepository.findByDealerAndStateOrderByCreatedAt(idDealer, state.toString());
+        List<ListingPostgresEntity> listingEntityList = listingRepository.findByDealerAndStateOrderByCreatedAt(idDealer, state);
         
         LOG.info("Listings: "+listingEntityList.size());
 

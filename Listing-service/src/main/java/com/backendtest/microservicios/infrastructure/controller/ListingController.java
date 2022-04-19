@@ -67,6 +67,12 @@ public class ListingController {
         return ResponseEntity.status(HttpStatus.OK).body(listingService.unpublish(idListing));
     }
 
+    @PutMapping("/tierLimit/{tierLimit}")
+    public ResponseEntity<String> changeTierLimit(@PathVariable(name = "tierLimit") int tierLimit){
+        listingService.changeTierLimit(tierLimit);
+        return ResponseEntity.status(HttpStatus.OK).body("New Tier limit set to "+tierLimit);
+    }
+
     @DeleteMapping("/{idListing}")
     public ResponseEntity<Listing> remove(@PathVariable(name = "idListing") UUID idListing){
         return ResponseEntity.status(HttpStatus.OK).body(listingService.remove(idListing));

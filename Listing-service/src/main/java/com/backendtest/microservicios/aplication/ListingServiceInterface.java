@@ -24,4 +24,6 @@ public interface ListingServiceInterface {
     Listing publish(UUID id, PublicationMethod publicationMethod);
 
     Listing unpublish(UUID id);
+
+    void changeTierLimit(int tierLimit);
 }

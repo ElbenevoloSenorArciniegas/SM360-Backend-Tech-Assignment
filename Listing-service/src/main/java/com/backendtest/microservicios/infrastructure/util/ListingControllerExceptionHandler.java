@@ -25,7 +25,7 @@ class ListingControllerExceptionHandler{
             .status(HttpStatus.NOT_FOUND)
             .body(exception.getMessage());
     }
-
+    
     @ExceptionHandler(DealerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleDealerNotFoundException(DealerNotFoundException exception) {
@@ -36,11 +36,20 @@ class ListingControllerExceptionHandler{
     }
 
     @ExceptionHandler(TierLimitException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     public ResponseEntity<String> handleTierLimitException(TierLimitException exception) {
         LOGGER.error(exception.getMessage());
         return ResponseEntity
             .status(HttpStatus.NOT_ACCEPTABLE)
+            .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(DealerClientNotAviable.class)
+    @ResponseStatus(HttpStatus.FAILED_DEPENDENCY)
+    public ResponseEntity<String> handleDealerClientNotAviable(DealerClientNotAviable exception) {
+        LOGGER.error(exception.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.FAILED_DEPENDENCY)
             .body(exception.getMessage());
     }
 

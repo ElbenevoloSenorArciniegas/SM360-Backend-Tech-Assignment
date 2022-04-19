@@ -10,6 +10,7 @@ import com.backendtest.microservicios.domain.Dealer;
 import com.backendtest.microservicios.domain.Listing;
 import com.backendtest.microservicios.domain.PublicationMethod;
 import com.backendtest.microservicios.domain.State;
+import com.backendtest.microservicios.domain.exception.DealerClientNotAviable;
 import com.backendtest.microservicios.domain.exception.ListingNotFoundException;
 import com.backendtest.microservicios.domain.exception.PublicationMethodNotSuportedException;
 import com.backendtest.microservicios.domain.exception.TierLimitException;
@@ -84,9 +85,7 @@ public class ListingServiceImpl implements ListingServiceInterface{
     private Listing searchDealer(Listing listing){
         if(listing.hasEmptyDealer()){
             Dealer dealerReturn = dealerClient.getById(listing.getDealer().getId()).getBody();
-            if(!dealerReturn.isDefaultClientResponse()){
-                listing.setDealer(dealerReturn);
-            }
+            listing.setDealer(dealerReturn);
         }
         return listing;
     }
