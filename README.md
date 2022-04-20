@@ -20,6 +20,11 @@ If they don't wait and start inmediatly, they will crash. Just re-start the fail
 Sometimes in local, the postgres image fails to excecute the sql script that creates the database, so it needs to be created manually ( ¬.¬)
 Nothing special, only a user with credentials user: "postgres" and password: "postgres", and the db named "backendtest".
 
+##API Docs
+
+Just go to 
+* http://localhost:8091/swagger-ui/index.html#/
+* http://localhost:8092/swagger-ui/index.html#/
 
 ## And that's all!! 
 (I hope jeje... See you in the review)
